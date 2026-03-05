@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
+import "./Header.module.css";
 
 const Header = () => {
   return (
     <header>
-      <h1>Global Traffic Intelligence</h1>
-
       <nav>
         <Link to="/map">Map</Link>
         <Link to="/dashboard">Dashboard</Link>
