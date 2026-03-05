@@ -1,20 +1,54 @@
-header {
+.header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 60px;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  right: 0;
+  height: 56px;
+  background: #fffefe;
+  border-bottom: 1px solid #f3f4f6;
   z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  padding: 0 24px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-header nav {
+.logo {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+}
+
+.logoImage {
+  width: 48px;
+  height: 48px;
+}
+
+.nav {
+  display: flex;
+  gap: 6px;
+}
+
+.nav a {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.nav a:hover {
+  color: #111827;
+  background: #f3f4f6;
+}
+
+.nav a.active {
+  color: #111827;
+  background: #e5e7eb;
 }
