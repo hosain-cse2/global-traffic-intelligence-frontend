@@ -98,7 +98,10 @@ async function parseJsonOrEmpty<T>(res: Response): Promise<T> {
  * Convenience API similar to axios: throws `ApiError` when `!res.ok`, parses JSON bodies.
  */
 export const apiClient = {
-  async get<T>(path: string, init?: Omit<ApiRequestInit, "json" | "method">): Promise<T> {
+  async get<T>(
+    path: string,
+    init?: Omit<ApiRequestInit, "json" | "method">,
+  ): Promise<T> {
     const res = await apiRequest(path, { ...init, method: "GET" });
     if (!res.ok) await throwIfNotOk(res);
     if (res.status === 204) return undefined as T;
@@ -138,7 +141,10 @@ export const apiClient = {
     return parseJsonOrEmpty<T>(res);
   },
 
-  async delete<T>(path: string, init?: Omit<ApiRequestInit, "json" | "method">): Promise<T> {
+  async delete<T>(
+    path: string,
+    init?: Omit<ApiRequestInit, "json" | "method">,
+  ): Promise<T> {
     const res = await apiRequest(path, { ...init, method: "DELETE" });
     if (!res.ok) await throwIfNotOk(res);
     if (res.status === 204) return undefined as T;
