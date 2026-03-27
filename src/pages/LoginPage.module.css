@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .header {
@@ -96,7 +96,6 @@
 
 .submit {
   width: 100%;
-  margin-top: 8px;
   padding: 14px 20px;
   font-size: 1rem;
   font-family: inherit;
