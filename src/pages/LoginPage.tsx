@@ -16,7 +16,7 @@ export default function LoginPage() {
     login({ email, password })
       .then((response: LoginResponse) => {
         console.log(response);
-        navigate("/");
+        navigate("/dashboard");
       })
       .catch((err: unknown) => {
         console.log(err);
