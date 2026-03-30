@@ -2,8 +2,6 @@
    Shell is exactly one viewport; padding (not margin) keeps the tall box inside 100vh. */
 .root {
   height: 100vh;
-  max-height: 100vh;
-  overflow: hidden;
 }
 
 .main {
