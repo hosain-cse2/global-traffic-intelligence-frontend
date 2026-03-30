@@ -4,7 +4,7 @@ import styles from "./AppLayout.module.css";
 
 export default function AppLayout() {
   return (
-    <div>
+    <div className={styles.root}>
       <Header />
       <main className={styles.main}>
         <Outlet />

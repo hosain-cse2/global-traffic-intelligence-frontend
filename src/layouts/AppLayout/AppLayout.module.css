@@ -1,5 +1,15 @@
+/* Fixed header is out of flow — margin-top + calc(height) still made the document taller than 100vh.
+   Shell is exactly one viewport; padding (not margin) keeps the tall box inside 100vh. */
+.root {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
 .main {
-  margin-top: 60px;
-  height: calc(100vh - 60px);
+  height: 100%;
+  padding-top: 60px;
+  box-sizing: border-box;
+  overflow-y: auto;
   width: 100%;
 }
