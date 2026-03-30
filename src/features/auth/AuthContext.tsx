@@ -1,5 +1,11 @@
 import { apiClient } from "@/lib/apiClient";
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export type User = {
   id: string;
@@ -20,19 +26,20 @@ export type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true,
   getMe: () => Promise.resolve(),
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  /** Must start true: first paint runs before useEffect/getMe — avoids treating “not checked yet” as logged out. */
+  const [isLoading, setIsLoading] = useState(true);
 
-  const getMe = async () => {
+  const getMe = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await apiClient.get<User>("/api/auth/me");
+      const response = await apiClient.get<User>("/api/me");
       setUser(response);
       setIsAuthenticated(true);
     } catch (error) {
@@ -41,7 +48,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void getMe();
+  }, [getMe]);
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated, isLoading, getMe }}>

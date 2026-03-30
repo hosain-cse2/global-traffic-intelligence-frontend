@@ -7,11 +7,11 @@ export function configureUnauthorizedHandler(handler: (() => void) | null) {
   onUnauthorized = handler;
 }
 
-function buildUrl(path: string): string {
-  const base = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  return `${base}/${path.replace(/^\//, "")}`;
-}
+// function buildUrl(path: string): string {
+//   const base = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
+//   if (path.startsWith("http://") || path.startsWith("https://")) return path;
+//   return `${base}/${path.replace(/^\//, "")}`;
+// }
 
 export class ApiError extends Error {
   readonly status: number;
@@ -69,7 +69,7 @@ export async function apiRequest(
     body = JSON.stringify(json);
   }
 
-  const url = buildUrl(path);
+  const url = path;
 
   try {
     const res = await fetch(url, {
