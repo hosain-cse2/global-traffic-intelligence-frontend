@@ -71,12 +71,16 @@
 
 .dropdownInner {
   max-height: 0;
+  opacity: 0;
   overflow: hidden;
-  transition: max-height 0.5s linear;
+  transition:
+    opacity 0.2s linear,
+    max-height 0.2s linear;
 }
 
 .dropdownShellOpen .dropdownInner {
   max-height: 185px;
+  opacity: 1;
 }
 
 .dropdown {
@@ -86,9 +90,12 @@
   list-style: none;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 14px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
   overflow: hidden;
-  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dropdownShell:not(.dropdownShellOpen) .dropdown {
