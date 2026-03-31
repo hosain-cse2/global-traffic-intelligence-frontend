@@ -2,16 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import styles from "./Header.module.css";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/features/auth/AuthContext";
-import type { User } from "@/features/auth/AuthContext";
-
-function initialsForUser(user: User): string {
-  const first = user.firstName?.trim();
-  const last = user.lastName?.trim();
-  if (first && last) return `${first[0]}${last[0]}`.toUpperCase();
-  if (first) return first.slice(0, 2).toUpperCase();
-  const local = user.email.split("@")[0] ?? user.email;
-  return local.slice(0, 2).toUpperCase();
-}
+import AvatarMenu from "./AvatarMenu";
 
 const Header = () => {
   const location = useLocation();
@@ -47,13 +38,7 @@ const Header = () => {
         </nav>
         {user ? (
           <div className={styles.userArea}>
-            <div
-              className={styles.avatar}
-              title={user.email}
-              aria-label={`Signed in as ${user.email}`}
-            >
-              {initialsForUser(user)}
-            </div>
+            <AvatarMenu />
           </div>
         ) : null}
       </div>
