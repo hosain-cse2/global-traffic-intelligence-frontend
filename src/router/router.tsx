@@ -3,7 +3,7 @@ import AppLayout from "../layouts/AppLayout/AppLayout";
 import MapPage from "../pages/MapPage";
 import DashboardPage from "../pages/DashboardPage";
 import PublicLayout from "@/layouts/PublicLayout/PublicLayout";
-import LoginPage from "@/pages/LoginPage";
+import LoginPage from "@/pages/LoginPage/LoginPage";
 import { PublicRoute } from "./PublicRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 

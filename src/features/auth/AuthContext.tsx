@@ -12,8 +12,6 @@ export type User = {
   email: string;
   firstName: string | null;
   lastName: string | null;
-  createdAt: string;
-  updatedAt: string;
 };
 
 export type AuthContextType = {
@@ -21,6 +19,7 @@ export type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   getMe: () => Promise<void>;
+  setSession: (sessionUser: User) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,6 +27,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   isLoading: true,
   getMe: () => Promise.resolve(),
+  setSession: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -35,6 +35,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   /** Must start true: first paint runs before useEffect/getMe — avoids treating “not checked yet” as logged out. */
   const [isLoading, setIsLoading] = useState(true);
+
+  const setSession = useCallback((sessionUser: User) => {
+    setUser(sessionUser);
+    setIsAuthenticated(true);
+  }, []);
 
   const getMe = useCallback(async () => {
     try {
@@ -55,7 +60,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [getMe]);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, getMe }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, isLoading, getMe, setSession }}
+    >
       {children}
     </AuthContext.Provider>
   );

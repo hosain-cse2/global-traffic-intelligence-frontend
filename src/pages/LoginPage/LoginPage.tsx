@@ -4,9 +4,14 @@ import { useNavigate } from "react-router-dom";
 import styles from "./LoginPage.module.css";
 import { login } from "@/services/authApi";
 import type { LoginResponse } from "@/types/auth";
+import { flushSync } from "react-dom";
+
+import { useAuth } from "@/features/auth/AuthContext";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { setSession } = useAuth();
+
   const [email, setEmail] = useState("alice@example.com");
   const [password, setPassword] = useState("password123");
 
@@ -16,6 +21,10 @@ export default function LoginPage() {
     login({ email, password })
       .then((response: LoginResponse) => {
         console.log(response);
+        const { user } = response;
+        flushSync(() => {
+          setSession(user);
+        });
         navigate("/dashboard");
       })
       .catch((err: unknown) => {
