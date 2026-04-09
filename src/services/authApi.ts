@@ -9,5 +9,5 @@ export async function login(
 
 /** Clears session cookies on the server. */
 export async function logout(): Promise<void> {
-  await apiClient.post<void>("/api/auth/logout");
+  await apiClient.post<void>("/api/session/logout");
 }

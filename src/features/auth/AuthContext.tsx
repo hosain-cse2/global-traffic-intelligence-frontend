@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const getMe = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await apiClient.get<User>("/api/me");
+      const response = await apiClient.get<User>("/api/session/me");
       setUser(response);
       setIsAuthenticated(true);
     } catch (error) {

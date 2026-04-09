@@ -14,6 +14,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("alice@example.com");
   const [password, setPassword] = useState("password123");
+  const [hasError, setHasError] = useState<boolean>(false);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -29,6 +30,7 @@ export default function LoginPage() {
       })
       .catch((err: unknown) => {
         console.log(err);
+        setHasError(true);
       });
   }
 
@@ -39,7 +41,7 @@ export default function LoginPage() {
           <h1 className={styles.title}>Sign in</h1>
           <p className={styles.subtitle}>Use your account to continue.</p>
         </div>
-        <p className={styles.error}>Invalid email or password.</p>
+        {hasError && <p className={styles.error}>Invalid email or password.</p>}
       </div>
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.field}>
