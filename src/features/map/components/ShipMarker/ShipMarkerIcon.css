@@ -1,0 +1,22 @@
+.ship-hull {
+  width: calc(var(--ship-size) * 0.42);
+  height: calc(var(--ship-size) * 0.9);
+  background: var(--ship-color);
+  clip-path: polygon(50% 0%, 85% 18%, 100% 72%, 50% 100%, 0% 72%, 15% 18%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-sizing: border-box;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+  position: relative;
+}
+
+.ship-hull::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 28%;
+  transform: translateX(-50%);
+  width: 28%;
+  height: 18%;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+}
