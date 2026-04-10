@@ -6,8 +6,3 @@ export async function login(
 ): Promise<LoginResponse> {
   return apiClient.post<LoginResponse>("/api/auth/login", credentials);
 }
-
-/** Clears session cookies on the server. */
-export async function logout(): Promise<void> {
-  await apiClient.post<void>("/api/session/logout");
-}

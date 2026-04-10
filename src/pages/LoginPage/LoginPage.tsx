@@ -1,37 +1,18 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
 import styles from "./LoginPage.module.css";
-import { login } from "@/services/authApi";
-import type { LoginResponse } from "@/types/auth";
-import { flushSync } from "react-dom";
 
-import { useAuth } from "@/features/auth/AuthContext";
+import useLogin from "@/hooks/useLogin";
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-  const { setSession } = useAuth();
-
   const [email, setEmail] = useState("alice@example.com");
   const [password, setPassword] = useState("password123");
-  const [hasError, setHasError] = useState<boolean>(false);
+
+  const { mutate: login, error } = useLogin();
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-
-    login({ email, password })
-      .then((response: LoginResponse) => {
-        console.log(response);
-        const { user } = response;
-        flushSync(() => {
-          setSession(user);
-        });
-        navigate("/dashboard");
-      })
-      .catch((err: unknown) => {
-        console.log(err);
-        setHasError(true);
-      });
+    login({ email, password });
   }
 
   return (
@@ -41,7 +22,7 @@ export default function LoginPage() {
           <h1 className={styles.title}>Sign in</h1>
           <p className={styles.subtitle}>Use your account to continue.</p>
         </div>
-        {hasError && <p className={styles.error}>Invalid email or password.</p>}
+        {error && <p className={styles.error}>Invalid email or password.</p>}
       </div>
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.field}>

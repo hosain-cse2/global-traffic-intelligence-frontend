@@ -1,12 +1,6 @@
-import { apiClient } from "@/lib/apiClient";
-import { logout as logoutRequest } from "@/services/authApi";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { useMe } from "@/hooks/useMe";
+
+import { createContext, useContext } from "react";
 
 export type User = {
   id: string;
@@ -16,66 +10,27 @@ export type User = {
 };
 
 export type AuthContextType = {
-  user: User | null;
+  user: User | undefined | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  getMe: () => Promise<void>;
-  setSession: (sessionUser: User) => void;
-  signOut: () => Promise<void>;
+  isReady: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
-  user: null,
+  user: undefined,
   isAuthenticated: false,
-  isLoading: true,
-  getMe: () => Promise.resolve(),
-  setSession: () => {},
-  signOut: () => Promise.resolve(),
+  isReady: false,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  /** Must start true: first paint runs before useEffect/getMe — avoids treating “not checked yet” as logged out. */
-  const [isLoading, setIsLoading] = useState(true);
-
-  const setSession = useCallback((sessionUser: User) => {
-    setUser(sessionUser);
-    setIsAuthenticated(true);
-  }, []);
-
-  const signOut = useCallback(async () => {
-    try {
-      await logoutRequest();
-    } catch {
-      /* still clear client session */
-    } finally {
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-  }, []);
-
-  const getMe = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiClient.get<User>("/api/session/me");
-      setUser(response);
-      setIsAuthenticated(true);
-    } catch (error) {
-      setIsAuthenticated(false);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void getMe();
-  }, [getMe]);
+  const { data: user, isLoading, isFetched } = useMe();
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, isLoading, getMe, setSession, signOut }}
+      value={{
+        user,
+        isAuthenticated: !!user,
+        isReady: isFetched && !isLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>

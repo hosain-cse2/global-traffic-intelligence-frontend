@@ -3,9 +3,9 @@ import { useAuth } from "@/features/auth/AuthContext";
 import { Navigate } from "react-router-dom";
 
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isReady } = useAuth();
 
-  if (isLoading) {
+  if (!isReady) {
     return null;
   }
 

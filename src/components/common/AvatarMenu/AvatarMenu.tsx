@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/features/auth/AuthContext";
 import type { User } from "@/features/auth/AuthContext";
 import styles from "./AvatarMenu.module.css";
+import useLogout from "@/hooks/useLogout";
 
 function initialsForUser(user: User): string {
   const first = user.firstName?.trim();
@@ -61,12 +62,12 @@ function IconSignOut() {
 }
 
 export default function AvatarMenu() {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const close = useCallback(() => setOpen(false), []);
+  const { mutateAsync: logout } = useLogout();
 
   useEffect(() => {
     if (!open) return;
@@ -90,8 +91,7 @@ export default function AvatarMenu() {
 
   const handleSignOut = async () => {
     close();
-    await signOut();
-    navigate("/auth/login", { replace: true });
+    await logout();
   };
 
   if (!user) return null;
