@@ -11,7 +11,7 @@ export default function useLogout(): UseMutationResult<void, Error, void> {
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.setQueryData<User>(["me"], undefined);
+      queryClient.setQueryData<User | null>(["me"], null);
     },
   });
 }
