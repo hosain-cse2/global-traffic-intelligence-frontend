@@ -38,21 +38,25 @@ export default function VesselMap() {
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         {isReady &&
-          ships?.map((ship) => (
-            <ShipMarker
-              key={ship.id}
-              position={[ship.lat, ship.lng]}
-              color={getShipColor(ship.type)}
-              heading={ship.heading}
-            >
-              <ShipMarkerPopup
-                name={ship.name}
-                type={ship.type}
-                speed={ship.speed}
-                status={ship.status}
-              />
-            </ShipMarker>
-          ))}
+          ships?.map((ship) => {
+            if (!ship.position) return null;
+
+            return (
+              <ShipMarker
+                key={ship.mmsi}
+                position={[ship.position?.latitude, ship.position?.longitude]}
+                color={getShipColor(ship.type)}
+                heading={ship.position?.heading}
+              >
+                <ShipMarkerPopup
+                  name={ship.shipName}
+                  type={ship.type}
+                  speed={ship.position?.sog}
+                  status={ship.position?.navStatus}
+                />
+              </ShipMarker>
+            );
+          })}
       </MapContainer>
     </div>
   );

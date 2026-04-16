@@ -2,9 +2,9 @@ import { Popup } from "react-leaflet";
 
 type ShipMarkerPopupProps = {
   name: string;
-  type: string;
-  speed: number;
-  status: string;
+  type?: string;
+  speed?: number;
+  status?: string;
 };
 
 export default function ShipMarkerPopup({
@@ -18,7 +18,7 @@ export default function ShipMarkerPopup({
       <div>
         <strong>{name}</strong>
         <br />
-        Type: {type}
+        Type: {type ?? "Unknown"}
         <br />
         Speed: {speed} kn
         <br />
