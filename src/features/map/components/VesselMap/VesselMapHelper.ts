@@ -15,6 +15,6 @@ export const getShipColor = (type?: string) => {
     case "tug":
       return "#475569";
     default:
-      return "#94a3b8";
+      return "#f59e0b";
   }
 };
