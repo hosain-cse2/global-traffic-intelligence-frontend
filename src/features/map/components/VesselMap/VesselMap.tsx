@@ -29,8 +29,8 @@ const VesselMap = () => {
         center={position}
         zoom={3}
         zoomSnap={0.1} // 👈 allows fractional zoom levels
-        zoomDelta={0.2} // 👈 how much each zoom step changes
-        wheelPxPerZoomLevel={100} // 👈 controls scroll sensitivity
+        zoomDelta={0.1} // 👈 how much each zoom step changes
+        wheelPxPerZoomLevel={1000} // 👈 controls scroll sensitivity
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
