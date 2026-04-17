@@ -6,5 +6,6 @@ export const useMe = () => {
     queryKey: ["me"],
     queryFn: () => getMe(),
     retry: false,
+    refetchInterval: 60 * 61 * 1000, // 61 minutes
   });
 };

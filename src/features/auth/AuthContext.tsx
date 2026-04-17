@@ -22,13 +22,14 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: user, isLoading, isFetched } = useMe();
+  const { data: user, isLoading, isFetched, isError, error } = useMe();
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated:
+          !!user && !(isError && error && (error as any).status === 401),
         isReady: isFetched && !isLoading,
       }}
     >
