@@ -4,31 +4,24 @@ import "./ShipMarkerIcon.css";
 type ShipIconOptions = {
   heading?: number;
   color?: string;
-  isSelected?: boolean;
-  size?: number;
 };
 
-export const createShipIcon = ({
+export const createSimpleShipIcon = ({
   heading = 0,
   color = "#22c55e",
-  isSelected = false,
-  size = 24,
 }: ShipIconOptions) => {
   return L.divIcon({
-    className: "ship-div-icon",
+    className: "simple-ship-icon",
     html: `
-        <div
-            class="ship-marker ${isSelected ? "selected" : ""}"
-            style="
-            --ship-color: ${color};
-            --ship-size: ${size}px;
-            transform: rotate(${heading}deg);
-            "
-        >
-            <div class="ship-hull"></div>
-        </div>
+      <div 
+        class="simple-ship-marker"
+        style="
+          --ship-color: ${color};
+          transform: rotate(${heading}deg);
+        "
+      ></div>
     `,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
   });
 };
