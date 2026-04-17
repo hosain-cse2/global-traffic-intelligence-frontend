@@ -1,10 +1,11 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
-// import ShipMarker from "../ShipMarker/ShipMarker";
-// import ShipMarkerPopup from "../ShipMarkerPopup/ShipMarkerPopup";
-// import { getShipColor } from "./VesselMapHelper";
 import { useGetShips } from "../../hooks/useShip";
 import { memo } from "react";
+
+// import ShipMarker from "../ShipMarker/ShipMarker";
+// import { getShipColor } from "./VesselMapHelper";
+
 import ShipCanvasLayerComponent from "../ShipCanvas/ShipCanvasLayerComponent";
 
 const VesselMap = () => {
