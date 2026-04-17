@@ -1,19 +1,16 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
 import ShipMarker from "../ShipMarker/ShipMarker";
-import ShipMarkerPopup from "../ShipMarkerPopup/ShipMarkerPopup";
+// import ShipMarkerPopup from "../ShipMarkerPopup/ShipMarkerPopup";
 import { getShipColor } from "./VesselMapHelper";
 import { useGetShips } from "../../hooks/useShip";
-import { useMemo } from "react";
+import { memo } from "react";
 
-export default function VesselMap() {
+const VesselMap = () => {
   const position: [number, number] = [48.137154, 11.576124]; // TODO: Get actual position from user location
   const { data: ships, isLoading, isFetched, isError, error } = useGetShips();
 
-  const isReady = useMemo(
-    () => isFetched && !isLoading,
-    [isFetched, isLoading],
-  );
+  const isReady = isFetched && !isLoading;
 
   if (isReady && isError) {
     return <div>Error loading ships: {error?.message}</div>;
@@ -31,6 +28,9 @@ export default function VesselMap() {
       <MapContainer
         center={position}
         zoom={3}
+        zoomSnap={0.1} // 👈 allows fractional zoom levels
+        zoomDelta={0.2} // 👈 how much each zoom step changes
+        wheelPxPerZoomLevel={100} // 👈 controls scroll sensitivity
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
@@ -44,20 +44,16 @@ export default function VesselMap() {
             return (
               <ShipMarker
                 key={ship.mmsi}
-                position={[ship.position?.latitude, ship.position?.longitude]}
+                latitude={ship.position?.latitude}
+                longitude={ship.position?.longitude}
                 color={getShipColor(ship.type)}
                 heading={ship.position?.heading}
-              >
-                <ShipMarkerPopup
-                  name={ship.shipName}
-                  type={ship.type}
-                  speed={ship.position?.sog}
-                  status={ship.position?.navStatus}
-                />
-              </ShipMarker>
+              />
             );
           })}
       </MapContainer>
     </div>
   );
-}
+};
+
+export default memo(VesselMap);

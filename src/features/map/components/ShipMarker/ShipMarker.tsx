@@ -1,10 +1,11 @@
 import { Marker } from "react-leaflet";
 import { createShipIcon } from "./ShipMarkerHelper";
 import type ShipMarkerPopup from "../ShipMarkerPopup/ShipMarkerPopup";
-import type { ReactElement } from "react";
+import { memo, useMemo, type ReactElement } from "react";
 
 type ShipMarkerProps = {
-  position: [number, number];
+  latitude: number;
+  longitude: number;
   heading?: number;
   color?: string;
   isSelected?: boolean;
@@ -12,25 +13,24 @@ type ShipMarkerProps = {
   children?: ReactElement<typeof ShipMarkerPopup>;
 };
 
-export default function ShipMarker({
-  position,
+const ShipMarker = ({
+  latitude,
+  longitude,
   heading,
   color,
   isSelected,
   size,
-  children,
-}: ShipMarkerProps) {
-  return (
-    <Marker
-      position={position}
-      icon={createShipIcon({
-        heading,
-        color,
-        isSelected,
-        size,
-      })}
-    >
-      {children}
-    </Marker>
+}: ShipMarkerProps) => {
+  const position = useMemo<[number, number]>(
+    () => [latitude, longitude],
+    [latitude, longitude],
   );
-}
+  const icon = useMemo(
+    () => createShipIcon({ heading, color, isSelected, size }),
+    [heading, color, isSelected, size],
+  );
+
+  return <Marker position={position} icon={icon} />;
+};
+
+export default memo(ShipMarker);
