@@ -13,6 +13,7 @@ export class ShipCanvasLayer extends L.Layer {
   private ctx!: CanvasRenderingContext2D;
   private ships: Ship[] = [];
   private animationFrameId: number | null = null;
+  private hoveredShip: Ship | null = null;
 
   constructor(options: ShipCanvasLayerOptions = {}) {
     super(options);
@@ -33,7 +34,7 @@ export class ShipCanvasLayer extends L.Layer {
     }
     this.ctx = context;
 
-    this.canvas.style.pointerEvents = "none";
+    // this.canvas.style.pointerEvents = "none";
 
     const pane = map.getPanes().overlayPane;
     pane.appendChild(this.canvas);
@@ -45,6 +46,9 @@ export class ShipCanvasLayer extends L.Layer {
     map.on("move", this.handleMoveOrZoom, this);
     map.on("zoom", this.handleMoveOrZoom, this);
     map.on("resize", this.handleResize, this);
+
+    this.canvas.addEventListener("mousemove", this.onMouseMove);
+    this.canvas.addEventListener("mouseleave", this.onMouseLeave);
 
     return this;
   }
@@ -63,8 +67,57 @@ export class ShipCanvasLayer extends L.Layer {
       this.canvas.parentNode.removeChild(this.canvas);
     }
 
+    this.canvas.removeEventListener("mousemove", this.onMouseMove);
+    this.canvas.removeEventListener("mouseleave", this.onMouseLeave);
+
     return this;
   }
+
+  private onMouseMove = (e: MouseEvent) => {
+    if (!this.mapInstance) return;
+
+    const rect = this.canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    let foundShip: Ship | null = null;
+
+    for (const ship of this.ships) {
+      const lat = ship.position?.latitude;
+      const lng = ship.position?.longitude;
+
+      if (lat == null || lng == null) continue;
+
+      const point = this.mapInstance.latLngToContainerPoint([lat, lng]);
+
+      // hit area around ship center
+      const hitSize = 8;
+
+      if (
+        mouseX >= point.x - hitSize &&
+        mouseX <= point.x + hitSize &&
+        mouseY >= point.y - hitSize &&
+        mouseY <= point.y + hitSize
+      ) {
+        foundShip = ship;
+        break;
+      }
+    }
+
+    if (this.hoveredShip !== foundShip) {
+      this.hoveredShip = foundShip;
+      this.canvas.style.cursor = foundShip ? "pointer" : "";
+      this.redraw();
+    }
+  };
+
+  private onMouseLeave = () => {
+    if (this.hoveredShip) {
+      this.hoveredShip = null;
+      this.canvas.style.cursor = "";
+      this.redraw();
+    }
+  };
 
   setShips(ships: Ship[]) {
     this.ships = ships;
@@ -127,27 +180,49 @@ export class ShipCanvasLayer extends L.Layer {
         continue;
       }
 
+      const isHovered = this.hoveredShip?.mmsi === ship.mmsi;
+
       this.drawShip(
         point.x,
         point.y,
         ship.position?.heading ?? 0,
         getShipColor(ship.type),
+        isHovered,
       );
     }
   }
 
-  private drawShip(x: number, y: number, heading: number, color: string) {
+  private drawShip(
+    x: number,
+    y: number,
+    heading: number,
+    color: string,
+    isHovered: boolean,
+  ) {
     const rad = (heading * Math.PI) / 180;
 
+    // draw highlight first without rotation
+    if (isHovered) {
+      this.ctx.save();
+      this.ctx.strokeStyle = "rgba(255, 0, 0, 0.9)"; // reddish
+      this.ctx.lineWidth = 0.5;
+
+      // dotted / dashed line
+      this.ctx.setLineDash([6, 1]); // 4px line, 3px gap
+      this.ctx.strokeRect(x - 15, y - 15, 30, 30);
+      this.ctx.restore();
+    }
+
+    // draw rotated ship
     this.ctx.save();
     this.ctx.translate(x, y);
     this.ctx.rotate(rad);
 
     this.ctx.beginPath();
-    this.ctx.moveTo(0, -10);
-    this.ctx.lineTo(6, 8);
-    this.ctx.lineTo(0, 4);
-    this.ctx.lineTo(-6, 8);
+    this.ctx.moveTo(0, -8);
+    this.ctx.lineTo(5, 8);
+    this.ctx.lineTo(0, 5);
+    this.ctx.lineTo(-5, 8);
     this.ctx.closePath();
 
     this.ctx.fillStyle = color;
