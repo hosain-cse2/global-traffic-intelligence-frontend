@@ -204,8 +204,8 @@ export class ShipCanvasLayer extends L.Layer {
     // draw highlight first without rotation
     if (isHovered) {
       this.ctx.save();
-      this.ctx.strokeStyle = "rgba(255, 0, 0, 0.9)"; // reddish
-      this.ctx.lineWidth = 0.5;
+      this.ctx.strokeStyle = "red"; // reddish
+      this.ctx.lineWidth = 1;
 
       // dotted / dashed line
       this.ctx.setLineDash([6, 1]); // 4px line, 3px gap
