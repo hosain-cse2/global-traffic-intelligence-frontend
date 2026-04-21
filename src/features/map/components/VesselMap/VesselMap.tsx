@@ -3,10 +3,8 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import { useGetShips } from "../../hooks/useShip";
 import { memo } from "react";
 
-// import ShipMarker from "../ShipMarker/ShipMarker";
-// import { getShipColor } from "./VesselMapHelper";
-
 import ShipCanvasLayerComponent from "../ShipCanvas/ShipCanvasLayerComponent";
+import styles from "./VesselMap.module.css";
 
 const VesselMap = () => {
   const position: [number, number] = [48.137154, 11.576124]; // TODO: Get actual position from user location
@@ -19,14 +17,7 @@ const VesselMap = () => {
   }
 
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        paddingTop: "10px",
-        paddingBottom: "10px",
-      }}
-    >
+    <div className={styles.mapContainer}>
       <MapContainer
         center={position}
         zoom={3}
