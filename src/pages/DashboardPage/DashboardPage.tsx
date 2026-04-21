@@ -10,27 +10,6 @@ import useDashboardStats from "@/features/dashboard/hooks/useDashboardStats";
 import { formatNumber } from "@/lib/helper";
 
 /** Static demo data — replace with API-driven state later */
-const KPI_STATS = [
-  {
-    label: "Active corridors",
-    value: "18",
-    hint: "3 high traffic",
-    positive: true,
-  },
-  {
-    label: "Alerts (24h)",
-    value: "24",
-    hint: "8 resolved",
-    positive: false,
-  },
-  {
-    label: "Avg. reporting lag",
-    value: "42s",
-    hint: "within SLA",
-    positive: true,
-  },
-] as const;
-
 const HOURLY_AIS: ChartData<AISAreaChartData> = [
   { time: "00:00", value: 320 },
   { time: "04:00", value: 180 },
@@ -130,7 +109,7 @@ export default function DashboardPage() {
           key={"Top regions"}
           label={"Top regions"}
           value={dashboardStats?.topRegions?.name || "N/A"}
-          hint={formatNumber(dashboardStats?.topRegions?.count) || "0"}
+          hint={`Total number of ships ${formatNumber(dashboardStats?.topRegions?.count) || "0"}`}
           positive={
             dashboardStats?.topRegions
               ? dashboardStats.topRegions.count > 0
