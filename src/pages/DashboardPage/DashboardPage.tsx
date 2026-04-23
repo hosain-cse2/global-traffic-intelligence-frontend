@@ -5,14 +5,7 @@ import AisBarChart from "@/components/common/Chart/AisBarChart/AisBarChart";
 import AisPieChart from "@/components/common/Chart/AisPieChart/AisPieChart";
 import useDashboardStats from "@/features/dashboard/hooks/useDashboardStats";
 import { formatNumber } from "@/lib/helper";
-
-const VESSEL_MIX = [
-  { type: "Cargo", count: 920 },
-  { type: "Tanker", count: 410 },
-  { type: "Passenger", count: 280 },
-  { type: "Fishing", count: 540 },
-  { type: "Other", count: 697 },
-];
+import { useMemo } from "react";
 
 /** Static share by region — pie chart */
 const REGION_SHARE = [
@@ -68,6 +61,15 @@ const RECENT_EVENTS = [
 export default function DashboardPage() {
   const { data: dashboardStats } = useDashboardStats();
 
+  /**
+   ** TODO: item.count > 200 not proper way to do this.
+   ** Also dependency is not correct. we need to proper dependency and logic.
+   */
+  const shipCountByRegion = useMemo(
+    () => dashboardStats?.shipCountByRegion.filter((item) => item.count > 200),
+    [dashboardStats],
+  );
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
@@ -115,28 +117,16 @@ export default function DashboardPage() {
       </section>
 
       <div className={styles.chartsRow}>
-        <ChartCard
-          title="Vessels by category"
-          description="Snapshot counts — not live."
-        >
-          <AisBarChart data={VESSEL_MIX} />
+        <ChartCard title="Vessels by category" description="Snapshot counts.">
+          <AisBarChart data={dashboardStats?.shipCountByType || []} />
         </ChartCard>
         <ChartCard
           title="Traffic share by region"
-          description="Approximate distribution of tracked AIS traffic — static demo."
+          description="Approximate distribution of tracked AIS traffic."
         >
-          <AisPieChart data={REGION_SHARE} />
+          <AisPieChart data={shipCountByRegion || []} />
         </ChartCard>
       </div>
-
-      {/* <div className={styles.chartsRowPie}>
-        <ChartCard
-          title="AIS messages (sample day)"
-          description="Inbound message volume by time block — static preview."
-        >
-          <AisAreaChart data={HOURLY_AIS} />
-        </ChartCard>
-      </div> */}
 
       <div className={styles.tablePanel}>
         <div className={styles.tableHead}>

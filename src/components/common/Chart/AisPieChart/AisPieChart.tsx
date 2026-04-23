@@ -9,8 +9,8 @@ import {
 import type { ChartData } from "recharts/types/state/chartDataSlice";
 
 export type AisPieChartDatum = {
-  name: string;
-  value: number;
+  region: string;
+  count: number;
 };
 
 /**
@@ -40,7 +40,8 @@ function pointInAnnulus(
   tAlongBand: number,
 ) {
   const r =
-    innerRadius + (outerRadius - innerRadius) * Math.min(1, Math.max(0, tAlongBand));
+    innerRadius +
+    (outerRadius - innerRadius) * Math.min(1, Math.max(0, tAlongBand));
   return {
     x: cx + Math.cos(-RAD * midAngleDeg) * r,
     y: cy + Math.sin(-RAD * midAngleDeg) * r,
@@ -105,7 +106,7 @@ function PieTooltip({ active, payload, total }: PieTipProps) {
   if (!active || !payload?.length) return null;
   const row = payload[0]?.payload;
   if (!row) return null;
-  const pct = total > 0 ? Math.round((row.value / total) * 100) : 0;
+  const pct = total > 0 ? Math.round((row.count / total) * 100) : 0;
   return (
     <div
       style={{
@@ -114,9 +115,9 @@ function PieTooltip({ active, payload, total }: PieTipProps) {
         background: "#fff",
       }}
     >
-      <div style={{ fontWeight: 600, color: "#0f172a" }}>{row.name}</div>
+      <div style={{ fontWeight: 600, color: "#0f172a" }}>{row.region}</div>
       <div style={{ color: "#64748b", marginTop: 4 }}>
-        {row.value.toLocaleString()} units · {pct}%
+        {row.count.toLocaleString()} units · {pct}%
       </div>
     </div>
   );
@@ -143,10 +144,9 @@ function CompactLegend(props: any) {
     >
       {payload.map((entry, i) => {
         const pl = entry.payload as AisPieChartDatum | undefined;
-        const name = pl?.name ?? String(entry.value ?? "");
-        const label = pl?.name ?? String(entry.value ?? "");
-        const color =
-          SLICE_COLORS[i % SLICE_COLORS.length] ?? SLICE_COLORS[0];
+        const name = pl?.region ?? String(entry.value ?? "");
+        const label = pl?.region ?? String(entry.value ?? "");
+        const color = SLICE_COLORS[i % SLICE_COLORS.length] ?? SLICE_COLORS[0];
         return (
           <span
             key={`${name}-${i}`}
@@ -187,7 +187,7 @@ const AisPieChart = ({
   variant = "fill",
   sliceLabels,
 }: AisPieChartProps) => {
-  const total = data.reduce((s, d) => s + d.value, 0);
+  const total = data.reduce((s, d) => s + d.count, 0);
   const showInnerLabels = sliceLabels !== false;
   const pieLabel = showInnerLabels ? renderCountInsideSlice : false;
 
@@ -196,8 +196,8 @@ const AisPieChart = ({
       <PieChart margin={{ top: 12, right: 8, bottom: 12, left: 8 }}>
         <Pie
           data={data}
-          dataKey="value"
-          nameKey="name"
+          dataKey="count"
+          nameKey="region"
           cx="44%"
           cy="50%"
           innerRadius={64}
@@ -212,14 +212,12 @@ const AisPieChart = ({
         >
           {data.map((_, i) => (
             <Cell
-              key={data[i].name}
+              key={data[i].region}
               fill={SLICE_COLORS[i % SLICE_COLORS.length]}
             />
           ))}
         </Pie>
-        <Tooltip
-          content={(props) => <PieTooltip {...props} total={total} />}
-        />
+        <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />
         <Legend
           layout="vertical"
           align="right"
@@ -247,8 +245,8 @@ const AisPieChart = ({
       <PieChart margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
         <Pie
           data={data}
-          dataKey="value"
-          nameKey="name"
+          dataKey="count"
+          nameKey="region"
           cx="50%"
           cy="48%"
           innerRadius="34%"
@@ -263,14 +261,12 @@ const AisPieChart = ({
         >
           {data.map((_, i) => (
             <Cell
-              key={data[i].name}
+              key={data[i].region}
               fill={SLICE_COLORS[i % SLICE_COLORS.length]}
             />
           ))}
         </Pie>
-        <Tooltip
-          content={(props) => <PieTooltip {...props} total={total} />}
-        />
+        <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />
         <Legend
           verticalAlign="bottom"
           align="center"
@@ -285,8 +281,8 @@ const AisPieChart = ({
     <PieChart margin={{ top: 4, right: 12, bottom: 8, left: 12 }}>
       <Pie
         data={data}
-        dataKey="value"
-        nameKey="name"
+        dataKey="count"
+        nameKey="region"
         cx="50%"
         cy="48%"
         innerRadius={0}
@@ -300,7 +296,7 @@ const AisPieChart = ({
       >
         {data.map((_, i) => (
           <Cell
-            key={data[i].name}
+            key={data[i].region}
             fill={SLICE_COLORS[i % SLICE_COLORS.length]}
           />
         ))}

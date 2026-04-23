@@ -1,8 +1,11 @@
+import { getShipColor } from "@/features/map/components/VesselMap/VesselMapHelper";
+import { useMemo } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   Tooltip,
   XAxis,
   YAxis,
@@ -24,9 +27,10 @@ const tooltipStyle = {
   fontSize: 12,
 };
 
-const BAR_COLORS = ["#22c55e", "#ef4444", "#38bdf8", "#f59e0b", "#94a3b8"];
-
 const AisBarChart = ({ data }: AISBarChartProps) => {
+  const barColors = useMemo(() => {
+    return data.map((item) => getShipColor(item.type));
+  }, [data]);
   return (
     <BarChart
       data={data}
@@ -45,8 +49,16 @@ const AisBarChart = ({ data }: AISBarChartProps) => {
       />
       <Tooltip contentStyle={tooltipStyle} />
       <Bar dataKey="count" radius={[0, 6, 6, 0]}>
+        <LabelList
+          dataKey="count"
+          position="center" // "insideRight" or "insideLeft", "insideCenter", etc.
+          formatter={(v) => (typeof v === "number" ? v.toLocaleString() : v)}
+          fill="#fff"
+          fontSize={11}
+          fontWeight={600}
+        />
         {data.map((_, i) => (
-          <Cell key={data[i].type} fill={BAR_COLORS[i]} />
+          <Cell key={data[i].type} fill={barColors[i]} />
         ))}
       </Bar>
     </BarChart>
