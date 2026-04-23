@@ -42,6 +42,11 @@
   }
 }
 
+.chartsRowPie {
+  margin-bottom: 24px;
+  max-width: 560px;
+}
+
 .tablePanel {
   background: #ffffff;
   border: 1px solid #e2e8f0;

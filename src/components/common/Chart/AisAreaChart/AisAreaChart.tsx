@@ -57,3 +57,14 @@ const AisAreaChart = ({ data }: AISAreaChartProps) => {
 };
 
 export default AisAreaChart;
+
+/** Static demo data — replace with API-driven state later */
+// const HOURLY_AIS: ChartData<AISAreaChartData> = [
+//   { time: "00:00", value: 320 },
+//   { time: "04:00", value: 180 },
+//   { time: "08:00", value: 890 },
+//   { time: "12:00", value: 1240 },
+//   { time: "16:00", value: 1100 },
+//   { time: "20:00", value: 760 },
+//   { time: "24:00", value: 410 },
+// ];

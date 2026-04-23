@@ -1,24 +1,10 @@
 import styles from "./DashboardPage.module.css";
 import KpiCard from "@/features/dashboard/KpiCard/KpiCard";
 import ChartCard from "@/features/dashboard/ChartCard/ChartCard";
-import AisAreaChart, {
-  type AISAreaChartData,
-} from "@/components/common/Chart/AisAreaChart/AisAreaChart";
-import type { ChartData } from "recharts/types/state/chartDataSlice";
 import AisBarChart from "@/components/common/Chart/AisBarChart/AisBarChart";
+import AisPieChart from "@/components/common/Chart/AisPieChart/AisPieChart";
 import useDashboardStats from "@/features/dashboard/hooks/useDashboardStats";
 import { formatNumber } from "@/lib/helper";
-
-/** Static demo data — replace with API-driven state later */
-const HOURLY_AIS: ChartData<AISAreaChartData> = [
-  { time: "00:00", value: 320 },
-  { time: "04:00", value: 180 },
-  { time: "08:00", value: 890 },
-  { time: "12:00", value: 1240 },
-  { time: "16:00", value: 1100 },
-  { time: "20:00", value: 760 },
-  { time: "24:00", value: 410 },
-];
 
 const VESSEL_MIX = [
   { type: "Cargo", count: 920 },
@@ -26,6 +12,14 @@ const VESSEL_MIX = [
   { type: "Passenger", count: 280 },
   { type: "Fishing", count: 540 },
   { type: "Other", count: 697 },
+];
+
+/** Static share by region — pie chart */
+const REGION_SHARE = [
+  { name: "Asia Pacific", value: 42 },
+  { name: "Europe", value: 28 },
+  { name: "Americas", value: 18 },
+  { name: "Middle East", value: 12 },
 ];
 
 const RECENT_EVENTS = [
@@ -122,19 +116,27 @@ export default function DashboardPage() {
 
       <div className={styles.chartsRow}>
         <ChartCard
-          title="AIS messages (sample day)"
-          description="Inbound message volume by time block — static preview."
-        >
-          <AisAreaChart data={HOURLY_AIS} />
-        </ChartCard>
-
-        <ChartCard
           title="Vessels by category"
           description="Snapshot counts — not live."
         >
           <AisBarChart data={VESSEL_MIX} />
         </ChartCard>
+        <ChartCard
+          title="Traffic share by region"
+          description="Approximate distribution of tracked AIS traffic — static demo."
+        >
+          <AisPieChart data={REGION_SHARE} />
+        </ChartCard>
       </div>
+
+      {/* <div className={styles.chartsRowPie}>
+        <ChartCard
+          title="AIS messages (sample day)"
+          description="Inbound message volume by time block — static preview."
+        >
+          <AisAreaChart data={HOURLY_AIS} />
+        </ChartCard>
+      </div> */}
 
       <div className={styles.tablePanel}>
         <div className={styles.tableHead}>
