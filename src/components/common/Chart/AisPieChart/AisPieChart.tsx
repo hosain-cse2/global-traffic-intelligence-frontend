@@ -71,7 +71,8 @@ function renderSliceCountOutside(props: PieLabelRenderProps) {
       fill="#0f172a"
       style={{
         pointerEvents: "none",
-        textShadow: "0 0 1px rgba(255,255,255,0.9), 0 1px 2px rgba(255,255,255,0.6)",
+        textShadow:
+          "0 0 1px rgba(255,255,255,0.9), 0 1px 2px rgba(255,255,255,0.6)",
       }}
     >
       <tspan fontSize={12} fontWeight={700}>
@@ -195,8 +196,7 @@ function CompactLegend(props: any) {
               alignItems: "center",
               gap: 6,
               fontSize: 14,
-              fontWeight: 600,
-              color: "#334155",
+              color: "#64748b",
             }}
           >
             <span
@@ -278,7 +278,7 @@ const AisPieChart = ({
             color: "#64748b",
           }}
           formatter={(value) => (
-            <span style={{ color: "#334155", fontWeight: 600 }}>{value}</span>
+            <span style={{ color: "#64748b" }}>{value}</span>
           )}
         />
       </PieChart>
