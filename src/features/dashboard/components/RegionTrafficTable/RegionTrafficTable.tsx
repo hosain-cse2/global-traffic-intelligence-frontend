@@ -1,15 +1,31 @@
 import { formatNumber } from "@/lib/helper";
 import styles from "./RegionTrafficTable.module.css";
 
+type TrafficLevel = "low" | "medium" | "high" | "not traffic";
+
 export type RegionalTraffic = {
   region: string;
   totalShips: number;
   movingShips: number;
   stationaryShips: number;
+  trafficLevel: TrafficLevel;
 };
 
 type RegionTrafficTableProps = {
   data: RegionalTraffic[];
+};
+
+const TrafficLevelBadge = ({
+  trafficLevel,
+}: {
+  trafficLevel: TrafficLevel;
+}) => {
+  return (
+    <span
+      title={trafficLevel}
+      className={`${styles.badge} ${styles[trafficLevel]}`}
+    />
+  );
 };
 
 const RegionTrafficTable: React.FC<RegionTrafficTableProps> = ({
@@ -24,21 +40,35 @@ const RegionTrafficTable: React.FC<RegionTrafficTableProps> = ({
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.textHeader}>Region</th>
-            <th className={styles.countHeader}>Ships (count)</th>
-            <th className={styles.countHeader}>Moving Ships</th>
-            <th className={styles.countHeader}>Stationary Ships</th>
+            <th className={styles.leftHeader}>Region</th>
+            <th className={styles.rightHeader}>Ships (count)</th>
+            <th className={styles.rightHeader}>Moving Ships</th>
+            <th className={styles.rightHeader}>Stationary Ships</th>
+            <th className={styles.centerHeader}>Traffic Level</th>
           </tr>
         </thead>
         <tbody>
-          {data?.map(({ region, totalShips, movingShips, stationaryShips }) => (
-            <tr key={region}>
-              <td>{region}</td>
-              <td className={styles.count}>{formatNumber(totalShips)}</td>
-              <td className={styles.count}>{formatNumber(movingShips)}</td>
-              <td className={styles.count}>{formatNumber(stationaryShips)}</td>
-            </tr>
-          ))}
+          {data?.map(
+            ({
+              region,
+              totalShips,
+              movingShips,
+              stationaryShips,
+              trafficLevel,
+            }) => (
+              <tr key={region}>
+                <td>{region}</td>
+                <td className={styles.count}>{formatNumber(totalShips)}</td>
+                <td className={styles.count}>{formatNumber(movingShips)}</td>
+                <td className={styles.count}>
+                  {formatNumber(stationaryShips)}
+                </td>
+                <td className={styles.trafficLevelCell}>
+                  <TrafficLevelBadge trafficLevel={trafficLevel} />
+                </td>
+              </tr>
+            ),
+          )}
         </tbody>
       </table>
     </div>

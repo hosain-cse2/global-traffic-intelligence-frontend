@@ -35,6 +35,6 @@ export const getShipColor = (type?: string) => {
     case "navy":
       return "#818cf8";
     default:
-      return "#fb923c";
+      return "#6366F1";
   }
 };
