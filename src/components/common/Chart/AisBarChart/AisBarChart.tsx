@@ -1,4 +1,7 @@
-import { getShipColor } from "@/features/map/components/VesselMap/VesselMapHelper";
+import {
+  getMovementStateColor,
+  getShipColor,
+} from "@/features/map/components/VesselMap/VesselMapHelper";
 import { useMemo } from "react";
 import {
   Bar,
@@ -13,12 +16,14 @@ import {
 import type { ChartData } from "recharts/types/state/chartDataSlice";
 
 export type AISBarChartData = {
-  type: string;
+  category: string;
   count: number;
 };
 
 type AISBarChartProps = {
   data: ChartData<AISBarChartData>;
+  /** `vesselType` uses ship-type colors; `movement` uses speed-band colors. */
+  series?: "vesselType" | "movement";
 };
 
 const tooltipStyle = {
@@ -27,10 +32,17 @@ const tooltipStyle = {
   fontSize: 12,
 };
 
-const AisBarChart = ({ data }: AISBarChartProps) => {
+const AisBarChart = ({
+  data,
+  series = "vesselType",
+}: AISBarChartProps) => {
   const barColors = useMemo(() => {
-    return data.map((item) => getShipColor(item.type));
-  }, [data]);
+    return data.map((item) =>
+      series === "movement"
+        ? getMovementStateColor(item.category)
+        : getShipColor(item.category),
+    );
+  }, [data, series]);
   return (
     <BarChart
       data={data}
@@ -41,7 +53,7 @@ const AisBarChart = ({ data }: AISBarChartProps) => {
       <XAxis type="number" tick={{ fontSize: 14, fill: "#64748b" }} />
       <YAxis
         type="category"
-        dataKey="type"
+        dataKey="category"
         width={96}
         tick={{ fontSize: 14, fill: "#64748b" }}
         axisLine={false}
@@ -58,7 +70,7 @@ const AisBarChart = ({ data }: AISBarChartProps) => {
           fontWeight={700}
         />
         {data.map((_, i) => (
-          <Cell key={data[i].type} fill={barColors[i]} />
+          <Cell key={data[i].category} fill={barColors[i]} />
         ))}
       </Bar>
     </BarChart>

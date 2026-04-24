@@ -8,6 +8,10 @@ import {
   type PieLabelRenderProps,
 } from "recharts";
 import type { ChartData } from "recharts/types/state/chartDataSlice";
+import {
+  getMovementStateColor,
+  getShipColor,
+} from "@/features/map/components/VesselMap/VesselMapHelper";
 
 export type AisPieChartDatum = {
   state: string;
@@ -21,11 +25,18 @@ export type AisPieChartDatum = {
  */
 export type AisPieChartVariant = "ring" | "classic" | "fill";
 
+export type AisPieChartDistribution = "movement" | "vesselType";
+
 type AisPieChartProps = {
   data: ChartData<AisPieChartDatum>;
   variant?: AisPieChartVariant;
   /** Count labels just outside the ring. Default `true`; set `false` to hide. */
   sliceLabels?: boolean;
+  /**
+   * `movement` — speed bands (slice order + colors match movement semantics).
+   * `vesselType` — ship categories (colors match the bar chart).
+   */
+  distribution?: AisPieChartDistribution;
 };
 
 const RAD = Math.PI / 180;
@@ -82,7 +93,7 @@ function renderSliceCountOutside(props: PieLabelRenderProps) {
   );
 }
 
-/** Fallback palette for unknown categories (movement uses `fillForState`). */
+/** Fallback when category is missing (see `sliceFill`). */
 const SLICE_COLORS = [
   "#2563eb",
   "#65a30d",
@@ -98,16 +109,13 @@ const SLICE_COLORS = [
 // TODO: use the actual movement state order from the backend.
 const MOVEMENT_STATE_ORDER = ["fast", "normal", "slow", "stationary"] as const;
 
-const STATE_FILL: Record<string, string> = {
-  fast: SLICE_COLORS[0],
-  normal: SLICE_COLORS[1],
-  slow: SLICE_COLORS[2],
-  stationary: SLICE_COLORS[3],
-};
-
 function sortPieData(
   data: ChartData<AisPieChartDatum>,
+  distribution: AisPieChartDistribution,
 ): ChartData<AisPieChartDatum> {
+  if (distribution === "vesselType") {
+    return [...data].sort((a, b) => a.state.localeCompare(b.state));
+  }
   const rank = new Map<string, number>(
     MOVEMENT_STATE_ORDER.map((s, i) => [s, i]),
   );
@@ -119,15 +127,13 @@ function sortPieData(
   });
 }
 
-function fillForState(state: string | undefined): string {
+function sliceFill(
+  state: string | undefined,
+  distribution: AisPieChartDistribution,
+): string {
   if (!state) return SLICE_COLORS[0];
-  const key = state.toLowerCase();
-  if (STATE_FILL[key]) return STATE_FILL[key];
-  let h = 0;
-  for (let i = 0; i < key.length; i++) {
-    h = (h + key.charCodeAt(i) * (i + 1)) % 997;
-  }
-  return SLICE_COLORS[4 + (h % (SLICE_COLORS.length - 4))];
+  if (distribution === "vesselType") return getShipColor(state);
+  return getMovementStateColor(state);
 }
 
 const tooltipStyle = {
@@ -158,18 +164,19 @@ function PieTooltip({ active, payload, total }: PieTipProps) {
     >
       <div style={{ fontWeight: 600, color: "#0f172a" }}>{row.state}</div>
       <div style={{ color: "#64748b", marginTop: 4 }}>
-        {row.count.toLocaleString()} units · {pct}%
+        {row.count.toLocaleString()} vessels · {pct}%
       </div>
     </div>
   );
 }
 
+type CompactLegendProps = {
+  payload?: ReadonlyArray<{ value?: unknown; payload?: unknown }>;
+  distribution: AisPieChartDistribution;
+};
+
 /** Tight legend row — swatches match slice colors */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function CompactLegend(props: any) {
-  const payload = props?.payload as
-    | ReadonlyArray<{ value?: unknown; payload?: unknown }>
-    | undefined;
+function CompactLegend({ payload, distribution }: CompactLegendProps) {
   if (!payload?.length) return null;
   return (
     <div
@@ -187,7 +194,7 @@ function CompactLegend(props: any) {
         const pl = entry.payload as AisPieChartDatum | undefined;
         const name = pl?.state ?? String(entry.value ?? "");
         const label = pl?.state ?? String(entry.value ?? "");
-        const color = fillForState(pl?.state);
+        const color = sliceFill(pl?.state, distribution);
         return (
           <span
             key={`${name}-${i}`}
@@ -226,8 +233,12 @@ const AisPieChart = ({
   data,
   variant = "fill",
   sliceLabels,
+  distribution = "movement",
 }: AisPieChartProps) => {
-  const pieData = useMemo(() => sortPieData(data), [data]);
+  const pieData = useMemo(
+    () => sortPieData(data, distribution),
+    [data, distribution],
+  );
   const total = pieData.reduce((s, d) => s + d.count, 0);
   const showSliceCountLabels = sliceLabels !== false;
   const pieLabel = showSliceCountLabels ? renderSliceCountOutside : false;
@@ -259,7 +270,10 @@ const AisPieChart = ({
           style={pieDepthStyle}
         >
           {pieData.map((row) => (
-            <Cell key={row.state} fill={fillForState(row.state)} />
+            <Cell
+              key={row.state}
+              fill={sliceFill(row.state, distribution)}
+            />
           ))}
         </Pie>
         <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />
@@ -312,14 +326,19 @@ const AisPieChart = ({
           style={pieDepthStyle}
         >
           {pieData.map((row) => (
-            <Cell key={row.state} fill={fillForState(row.state)} />
+            <Cell
+              key={row.state}
+              fill={sliceFill(row.state, distribution)}
+            />
           ))}
         </Pie>
         <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />
         <Legend
           verticalAlign="bottom"
           align="center"
-          content={(props) => <CompactLegend {...props} />}
+          content={(props) => (
+            <CompactLegend {...props} distribution={distribution} />
+          )}
         />
       </PieChart>
     );
@@ -351,7 +370,10 @@ const AisPieChart = ({
         style={pieDepthStyle}
       >
         {pieData.map((row) => (
-          <Cell key={row.state} fill={fillForState(row.state)} />
+          <Cell
+            key={row.state}
+            fill={sliceFill(row.state, distribution)}
+          />
         ))}
       </Pie>
       <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />

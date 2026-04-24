@@ -57,14 +57,33 @@ export default function DashboardPage() {
       </section>
 
       <div className={styles.chartsRow}>
-        <ChartCard title="Vessels by category" description="Snapshot counts.">
-          <AisBarChart data={dashboardStats?.shipCountByType || []} />
-        </ChartCard>
         <ChartCard
           title="Traffic by movement state"
-          description="Share of tracked vessels by AIS-derived speed band."
+          description="Count of tracked vessels by AIS-derived speed band."
         >
-          <AisPieChart data={dashboardStats?.movementState || []} />
+          <AisBarChart
+            series="movement"
+            data={(dashboardStats?.movementState || []).map(
+              ({ state, count }) => ({
+                category: state,
+                count,
+              }),
+            )}
+          />
+        </ChartCard>
+        <ChartCard
+          title="Vessels by category"
+          description="Share of tracked vessels by vessel type."
+        >
+          <AisPieChart
+            distribution="vesselType"
+            data={(dashboardStats?.shipCountByType || []).map(
+              ({ type, count }) => ({
+                state: type,
+                count,
+              }),
+            )}
+          />
         </ChartCard>
       </div>
 
