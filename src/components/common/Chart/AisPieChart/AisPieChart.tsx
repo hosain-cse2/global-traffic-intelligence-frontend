@@ -24,35 +24,31 @@ export type AisPieChartVariant = "ring" | "classic" | "fill";
 type AisPieChartProps = {
   data: ChartData<AisPieChartDatum>;
   variant?: AisPieChartVariant;
-  /** In-slice count labels. Default `true`; set `false` to hide. */
+  /** Count labels just outside the ring. Default `true`; set `false` to hide. */
   sliceLabels?: boolean;
 };
 
 const RAD = Math.PI / 180;
 
+/** Pixels past the slice outer radius for count labels. */
+const LABEL_OUTSIDE_OFFSET = 18;
+
 /** Same angle convention as Recharts `polarToCartesian`. */
-function pointInAnnulus(
+function pointAtRadius(
   cx: number,
   cy: number,
-  innerRadius: number,
-  outerRadius: number,
+  radius: number,
   midAngleDeg: number,
-  /** 0 = inner edge, 1 = outer edge */
-  tAlongBand: number,
 ) {
-  const r =
-    innerRadius +
-    (outerRadius - innerRadius) * Math.min(1, Math.max(0, tAlongBand));
   return {
-    x: cx + Math.cos(-RAD * midAngleDeg) * r,
-    y: cy + Math.sin(-RAD * midAngleDeg) * r,
+    x: cx + Math.cos(-RAD * midAngleDeg) * radius,
+    y: cy + Math.sin(-RAD * midAngleDeg) * radius,
   };
 }
 
-function renderCountInsideSlice(props: PieLabelRenderProps) {
+function renderSliceCountOutside(props: PieLabelRenderProps) {
   const cx = Number(props.cx);
   const cy = Number(props.cy);
-  const inner = Number(props.innerRadius);
   const outer = Number(props.outerRadius);
   const mid = Number(props.midAngle ?? 0);
   const pl = props.payload as AisPieChartDatum | undefined;
@@ -63,18 +59,19 @@ function renderCountInsideSlice(props: PieLabelRenderProps) {
         ? props.value
         : Number(props.value);
   const count = Number.isFinite(raw) ? raw.toLocaleString() : "—";
-  const { x, y } = pointInAnnulus(cx, cy, inner, outer, mid, 0.56);
+  const { x, y } = pointAtRadius(cx, cy, outer + LABEL_OUTSIDE_OFFSET, mid);
+  const ta = props.textAnchor as "start" | "middle" | "end" | undefined;
 
   return (
     <text
       x={x}
       y={y}
-      textAnchor="middle"
+      textAnchor={ta ?? "middle"}
       dominantBaseline="middle"
-      fill="#ffffff"
+      fill="#0f172a"
       style={{
         pointerEvents: "none",
-        textShadow: "0 1px 4px rgba(15, 23, 42, 0.55)",
+        textShadow: "0 0 1px rgba(255,255,255,0.9), 0 1px 2px rgba(255,255,255,0.6)",
       }}
     >
       <tspan fontSize={12} fontWeight={700}>
@@ -232,12 +229,19 @@ const AisPieChart = ({
 }: AisPieChartProps) => {
   const pieData = useMemo(() => sortPieData(data), [data]);
   const total = pieData.reduce((s, d) => s + d.count, 0);
-  const showInnerLabels = sliceLabels !== false;
-  const pieLabel = showInnerLabels ? renderCountInsideSlice : false;
+  const showSliceCountLabels = sliceLabels !== false;
+  const pieLabel = showSliceCountLabels ? renderSliceCountOutside : false;
 
   if (variant === "ring") {
     return (
-      <PieChart margin={{ top: 12, right: 8, bottom: 12, left: 8 }}>
+      <PieChart
+        margin={{
+          top: showSliceCountLabels ? 18 : 12,
+          right: 8,
+          bottom: showSliceCountLabels ? 18 : 12,
+          left: showSliceCountLabels ? 28 : 8,
+        }}
+      >
         <Pie
           data={pieData}
           dataKey="count"
@@ -283,7 +287,14 @@ const AisPieChart = ({
 
   if (variant === "fill") {
     return (
-      <PieChart margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
+      <PieChart
+        margin={{
+          top: showSliceCountLabels ? 24 : 4,
+          right: showSliceCountLabels ? 40 : 4,
+          bottom: showSliceCountLabels ? 14 : 0,
+          left: showSliceCountLabels ? 40 : 4,
+        }}
+      >
         <Pie
           data={pieData}
           dataKey="count"
@@ -316,7 +327,14 @@ const AisPieChart = ({
 
   /* classic */
   return (
-    <PieChart margin={{ top: 4, right: 12, bottom: 8, left: 12 }}>
+    <PieChart
+      margin={{
+        top: showSliceCountLabels ? 22 : 4,
+        right: showSliceCountLabels ? 36 : 12,
+        bottom: showSliceCountLabels ? 34 : 8,
+        left: showSliceCountLabels ? 36 : 12,
+      }}
+    >
       <Pie
         data={pieData}
         dataKey="count"
