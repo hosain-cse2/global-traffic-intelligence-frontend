@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   Cell,
   Legend,
@@ -9,7 +10,7 @@ import {
 import type { ChartData } from "recharts/types/state/chartDataSlice";
 
 export type AisPieChartDatum = {
-  region: string;
+  state: string;
   count: number;
 };
 
@@ -54,8 +55,14 @@ function renderCountInsideSlice(props: PieLabelRenderProps) {
   const inner = Number(props.innerRadius);
   const outer = Number(props.outerRadius);
   const mid = Number(props.midAngle ?? 0);
-  const n = typeof props.value === "number" ? props.value : Number(props.value);
-  const count = Number.isFinite(n) ? n.toLocaleString() : "—";
+  const pl = props.payload as AisPieChartDatum | undefined;
+  const raw =
+    pl != null && typeof pl.count === "number"
+      ? pl.count
+      : typeof props.value === "number"
+        ? props.value
+        : Number(props.value);
+  const count = Number.isFinite(raw) ? raw.toLocaleString() : "—";
   const { x, y } = pointInAnnulus(cx, cy, inner, outer, mid, 0.56);
 
   return (
@@ -77,7 +84,7 @@ function renderCountInsideSlice(props: PieLabelRenderProps) {
   );
 }
 
-/** Solid fill per slice index (repeats if there are more slices than colors). */
+/** Fallback palette for unknown categories (movement uses `fillForState`). */
 const SLICE_COLORS = [
   "#2563eb",
   "#65a30d",
@@ -88,6 +95,42 @@ const SLICE_COLORS = [
   "#ea580c",
   "#7c3aed",
 ] as const;
+
+/** Stable slice / legend order for AIS movement buckets. */
+// TODO: use the actual movement state order from the backend.
+const MOVEMENT_STATE_ORDER = ["fast", "normal", "slow", "stationary"] as const;
+
+const STATE_FILL: Record<string, string> = {
+  fast: SLICE_COLORS[0],
+  normal: SLICE_COLORS[1],
+  slow: SLICE_COLORS[2],
+  stationary: SLICE_COLORS[3],
+};
+
+function sortPieData(
+  data: ChartData<AisPieChartDatum>,
+): ChartData<AisPieChartDatum> {
+  const rank = new Map<string, number>(
+    MOVEMENT_STATE_ORDER.map((s, i) => [s, i]),
+  );
+  return [...data].sort((a, b) => {
+    const ia = rank.get(a.state.toLowerCase()) ?? 99;
+    const ib = rank.get(b.state.toLowerCase()) ?? 99;
+    if (ia !== ib) return ia - ib;
+    return a.state.localeCompare(b.state);
+  });
+}
+
+function fillForState(state: string | undefined): string {
+  if (!state) return SLICE_COLORS[0];
+  const key = state.toLowerCase();
+  if (STATE_FILL[key]) return STATE_FILL[key];
+  let h = 0;
+  for (let i = 0; i < key.length; i++) {
+    h = (h + key.charCodeAt(i) * (i + 1)) % 997;
+  }
+  return SLICE_COLORS[4 + (h % (SLICE_COLORS.length - 4))];
+}
 
 const tooltipStyle = {
   borderRadius: 10,
@@ -115,7 +158,7 @@ function PieTooltip({ active, payload, total }: PieTipProps) {
         background: "#fff",
       }}
     >
-      <div style={{ fontWeight: 600, color: "#0f172a" }}>{row.region}</div>
+      <div style={{ fontWeight: 600, color: "#0f172a" }}>{row.state}</div>
       <div style={{ color: "#64748b", marginTop: 4 }}>
         {row.count.toLocaleString()} units · {pct}%
       </div>
@@ -144,9 +187,9 @@ function CompactLegend(props: any) {
     >
       {payload.map((entry, i) => {
         const pl = entry.payload as AisPieChartDatum | undefined;
-        const name = pl?.region ?? String(entry.value ?? "");
-        const label = pl?.region ?? String(entry.value ?? "");
-        const color = SLICE_COLORS[i % SLICE_COLORS.length] ?? SLICE_COLORS[0];
+        const name = pl?.state ?? String(entry.value ?? "");
+        const label = pl?.state ?? String(entry.value ?? "");
+        const color = fillForState(pl?.state);
         return (
           <span
             key={`${name}-${i}`}
@@ -187,7 +230,8 @@ const AisPieChart = ({
   variant = "fill",
   sliceLabels,
 }: AisPieChartProps) => {
-  const total = data.reduce((s, d) => s + d.count, 0);
+  const pieData = useMemo(() => sortPieData(data), [data]);
+  const total = pieData.reduce((s, d) => s + d.count, 0);
   const showInnerLabels = sliceLabels !== false;
   const pieLabel = showInnerLabels ? renderCountInsideSlice : false;
 
@@ -195,9 +239,9 @@ const AisPieChart = ({
     return (
       <PieChart margin={{ top: 12, right: 8, bottom: 12, left: 8 }}>
         <Pie
-          data={data}
+          data={pieData}
           dataKey="count"
-          nameKey="region"
+          nameKey="state"
           cx="44%"
           cy="50%"
           innerRadius={64}
@@ -210,11 +254,8 @@ const AisPieChart = ({
           labelLine={false}
           style={pieDepthStyle}
         >
-          {data.map((_, i) => (
-            <Cell
-              key={data[i].region}
-              fill={SLICE_COLORS[i % SLICE_COLORS.length]}
-            />
+          {pieData.map((row) => (
+            <Cell key={row.state} fill={fillForState(row.state)} />
           ))}
         </Pie>
         <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />
@@ -244,9 +285,9 @@ const AisPieChart = ({
     return (
       <PieChart margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
         <Pie
-          data={data}
+          data={pieData}
           dataKey="count"
-          nameKey="region"
+          nameKey="state"
           cx="50%"
           cy="48%"
           innerRadius="34%"
@@ -259,11 +300,8 @@ const AisPieChart = ({
           labelLine={false}
           style={pieDepthStyle}
         >
-          {data.map((_, i) => (
-            <Cell
-              key={data[i].region}
-              fill={SLICE_COLORS[i % SLICE_COLORS.length]}
-            />
+          {pieData.map((row) => (
+            <Cell key={row.state} fill={fillForState(row.state)} />
           ))}
         </Pie>
         <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />
@@ -280,9 +318,9 @@ const AisPieChart = ({
   return (
     <PieChart margin={{ top: 4, right: 12, bottom: 8, left: 12 }}>
       <Pie
-        data={data}
+        data={pieData}
         dataKey="count"
-        nameKey="region"
+        nameKey="state"
         cx="50%"
         cy="48%"
         innerRadius={0}
@@ -294,11 +332,8 @@ const AisPieChart = ({
         labelLine={false}
         style={pieDepthStyle}
       >
-        {data.map((_, i) => (
-          <Cell
-            key={data[i].region}
-            fill={SLICE_COLORS[i % SLICE_COLORS.length]}
-          />
+        {pieData.map((row) => (
+          <Cell key={row.state} fill={fillForState(row.state)} />
         ))}
       </Pie>
       <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />

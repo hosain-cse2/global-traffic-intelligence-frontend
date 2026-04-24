@@ -4,4 +4,5 @@ export type DashboardStats = {
   topRegions: { name: string; count: number } | null;
   shipCountByType: { type: string; count: number }[];
   shipCountByRegion: { region: string; count: number }[];
+  movementState: { state: string; count: number }[];
 };
