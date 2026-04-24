@@ -10,7 +10,7 @@ type ChartCardProps = {
 const ChartCard = ({ title, description, children }: ChartCardProps) => {
   return (
     <div className={styles.panel}>
-      <h2 className={styles.panelTitle}>{title}</h2>
+      <h2 className={styles.panelTitle}>{title.toUpperCase()}</h2>
       <p className={styles.panelDesc}>{description}</p>
       <div className={styles.chartBox}>
         <ResponsiveContainer width="100%" height="100%">

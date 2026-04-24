@@ -19,7 +19,7 @@ export const getShipColor = (type?: string) => {
   const t = type?.toLowerCase();
   switch (t) {
     case "cargo":
-      return "#fb7185";
+      return "#6366F1";
     case "tanker":
       return "#f472b6";
     case "passenger":
@@ -35,6 +35,6 @@ export const getShipColor = (type?: string) => {
     case "navy":
       return "#818cf8";
     default:
-      return "#6366F1";
+      return "#fb7185";
   }
 };
