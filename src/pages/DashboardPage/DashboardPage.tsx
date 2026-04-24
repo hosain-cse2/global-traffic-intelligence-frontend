@@ -87,7 +87,7 @@ export default function DashboardPage() {
         </ChartCard>
       </div>
 
-      <RegionTrafficTable data={dashboardStats?.shipCountByRegion || []} />
+      <RegionTrafficTable data={dashboardStats?.regionalTrafficList || []} />
     </div>
   );
 }

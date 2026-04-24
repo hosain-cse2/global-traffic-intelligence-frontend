@@ -30,7 +30,6 @@
 }
 
 .table th {
-  text-align: left;
   padding: 10px 20px;
   background: #f8fafc;
   color: #64748b;
@@ -73,9 +72,24 @@
   color: #0369a1;
 }
 
-.mono {
+/* .mono {
   font-variant-numeric: tabular-nums;
   font-family: ui-monospace, monospace;
   font-size: 0.82rem;
   color: #64748b;
+} */
+
+.textHeader {
+  text-align: left;
+}
+
+.countHeader {
+  text-align: right;
+}
+
+.count {
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.875rem;
+  text-align: right;
 }

@@ -1,13 +1,15 @@
 import { formatNumber } from "@/lib/helper";
 import styles from "./RegionTrafficTable.module.css";
 
-type RegionTraffic = {
+export type RegionalTraffic = {
   region: string;
-  count: number;
+  totalShips: number;
+  movingShips: number;
+  stationaryShips: number;
 };
 
 type RegionTrafficTableProps = {
-  data: RegionTraffic[];
+  data: RegionalTraffic[];
 };
 
 const RegionTrafficTable: React.FC<RegionTrafficTableProps> = ({
@@ -22,15 +24,19 @@ const RegionTrafficTable: React.FC<RegionTrafficTableProps> = ({
       <table className={styles.table}>
         <thead>
           <tr>
-            <th>Region</th>
-            <th>Ships (count)</th>
+            <th className={styles.textHeader}>Region</th>
+            <th className={styles.countHeader}>Ships (count)</th>
+            <th className={styles.countHeader}>Moving Ships</th>
+            <th className={styles.countHeader}>Stationary Ships</th>
           </tr>
         </thead>
         <tbody>
-          {data?.map(({ region, count }) => (
+          {data?.map(({ region, totalShips, movingShips, stationaryShips }) => (
             <tr key={region}>
-              <td className={styles.mono}>{region}</td>
-              <td>{formatNumber(count || 0)}</td>
+              <td>{region}</td>
+              <td className={styles.count}>{formatNumber(totalShips)}</td>
+              <td className={styles.count}>{formatNumber(movingShips)}</td>
+              <td className={styles.count}>{formatNumber(stationaryShips)}</td>
             </tr>
           ))}
         </tbody>
