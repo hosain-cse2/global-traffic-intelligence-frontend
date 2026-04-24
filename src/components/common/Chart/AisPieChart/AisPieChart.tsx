@@ -95,14 +95,16 @@ function renderSliceCountOutside(props: PieLabelRenderProps) {
 
 /** Fallback when category is missing (see `sliceFill`). */
 const SLICE_COLORS = [
-  "#2563eb",
-  "#65a30d",
-  "#eab308",
-  "#c026d3",
-  "#06b6d4",
-  "#f43f5e",
-  "#ea580c",
-  "#7c3aed",
+  "#4ade80",
+  "#fb7185",
+  "#38bdf8",
+  "#facc15",
+  "#22d3d4",
+  "#c084fc",
+  "#fb923c",
+  "#818cf8",
+  "#f472b6",
+  "#99f6e4",
 ] as const;
 
 /** Stable slice / legend order for AIS movement buckets. */
@@ -131,6 +133,7 @@ function sliceFill(
   state: string | undefined,
   distribution: AisPieChartDistribution,
 ): string {
+  console.log({ state, distribution });
   if (!state) return SLICE_COLORS[0];
   if (distribution === "vesselType") return getShipColor(state);
   return getMovementStateColor(state);
@@ -270,10 +273,7 @@ const AisPieChart = ({
           style={pieDepthStyle}
         >
           {pieData.map((row) => (
-            <Cell
-              key={row.state}
-              fill={sliceFill(row.state, distribution)}
-            />
+            <Cell key={row.state} fill={sliceFill(row.state, distribution)} />
           ))}
         </Pie>
         <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />
@@ -326,10 +326,7 @@ const AisPieChart = ({
           style={pieDepthStyle}
         >
           {pieData.map((row) => (
-            <Cell
-              key={row.state}
-              fill={sliceFill(row.state, distribution)}
-            />
+            <Cell key={row.state} fill={sliceFill(row.state, distribution)} />
           ))}
         </Pie>
         <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />
@@ -370,10 +367,7 @@ const AisPieChart = ({
         style={pieDepthStyle}
       >
         {pieData.map((row) => (
-          <Cell
-            key={row.state}
-            fill={sliceFill(row.state, distribution)}
-          />
+          <Cell key={row.state} fill={sliceFill(row.state, distribution)} />
         ))}
       </Pie>
       <Tooltip content={(props) => <PieTooltip {...props} total={total} />} />

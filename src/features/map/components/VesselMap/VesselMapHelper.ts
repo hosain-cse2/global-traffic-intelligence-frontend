@@ -19,9 +19,9 @@ export const getShipColor = (type?: string) => {
   const t = type?.toLowerCase();
   switch (t) {
     case "cargo":
-      return "#4ade80";
-    case "tanker":
       return "#fb7185";
+    case "tanker":
+      return "#f472b6";
     case "passenger":
       return "#38bdf8";
     case "fishing":
@@ -31,12 +31,10 @@ export const getShipColor = (type?: string) => {
     case "pleasure":
       return "#c084fc";
     case "tug":
-      return "#fb923c";
+      return "#4ade80";
     case "navy":
       return "#818cf8";
-    case "other":
-      return "#f472b6";
     default:
-      return "#99f6e4";
+      return "#fb923c";
   }
 };
