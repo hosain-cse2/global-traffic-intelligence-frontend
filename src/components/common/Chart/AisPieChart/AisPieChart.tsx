@@ -135,7 +135,7 @@ function fillForState(state: string | undefined): string {
 const tooltipStyle = {
   borderRadius: 10,
   border: "1px solid #e2e8f0",
-  fontSize: 12,
+  fontSize: 14,
   boxShadow: "0 4px 12px rgba(15, 23, 42, 0.08)",
 };
 
@@ -197,7 +197,7 @@ function CompactLegend(props: any) {
               display: "inline-flex",
               alignItems: "center",
               gap: 6,
-              fontSize: 11,
+              fontSize: 14,
               fontWeight: 600,
               color: "#334155",
             }}

@@ -32,30 +32,34 @@ const AisBarChart = ({ data }: AISBarChartProps) => {
     return data.map((item) => getShipColor(item.type));
   }, [data]);
   return (
-    <BarChart
-      data={data}
-      layout="vertical"
-      margin={{ top: 4, right: 16, left: 8, bottom: 4 }}
-    >
-      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-      <XAxis type="number" tick={{ fontSize: 11, fill: "#64748b" }} />
-      <YAxis
+    <BarChart data={data} margin={{ top: 26, right: 8, left: 4, bottom: 28 }}>
+      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+      <XAxis
         type="category"
         dataKey="type"
-        width={88}
-        tick={{ fontSize: 11, fill: "#64748b" }}
+        tick={{ fontSize: 14, fill: "#000000", fontWeight: 700 }}
+        axisLine={false}
+        tickLine={false}
+        interval={0}
+        angle={-28}
+        textAnchor="end"
+        height={56}
+      />
+      <YAxis
+        type="number"
+        tick={{ fontSize: 14, fill: "#000000", fontWeight: 700 }}
         axisLine={false}
         tickLine={false}
       />
       <Tooltip contentStyle={tooltipStyle} />
-      <Bar dataKey="count" radius={[0, 6, 6, 0]}>
+      <Bar dataKey="count" radius={[6, 6, 0, 0]}>
         <LabelList
           dataKey="count"
-          position="center" // "insideRight" or "insideLeft", "insideCenter", etc.
+          position="top"
           formatter={(v) => (typeof v === "number" ? v.toLocaleString() : v)}
-          fill="#fff"
-          fontSize={11}
-          fontWeight={600}
+          fill="#94a3b8"
+          fontSize={13}
+          fontWeight={700}
         />
         {data.map((_, i) => (
           <Cell key={data[i].type} fill={barColors[i]} />
