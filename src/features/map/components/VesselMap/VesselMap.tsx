@@ -20,7 +20,7 @@ const VesselMap = () => {
     <div className={styles.mapContainer}>
       <MapContainer
         center={position}
-        zoom={5}
+        zoom={3}
         zoomSnap={0.1} // 👈 allows fractional zoom levels
         zoomDelta={0.1} // 👈 how much each zoom step changes
         wheelPxPerZoomLevel={30} // 👈 controls scroll sensitivity
