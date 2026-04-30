@@ -90,7 +90,10 @@ export default function DashboardPage() {
         </ChartCard>
       </div>
 
-      <RegionTrafficTable data={dashboardStats?.regionalTrafficList || []} />
+      <RegionTrafficTable
+        data={dashboardStats?.regionalTrafficList || []}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

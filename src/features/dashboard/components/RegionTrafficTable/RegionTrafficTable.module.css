@@ -28,7 +28,20 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 0.875rem;
+}
+
+.regionColumn {
+  width: 28%;
+}
+
+.countColumn {
+  width: 18%;
+}
+
+.levelColumn {
+  width: 18%;
 }
 
 .table th {
@@ -45,6 +58,10 @@
   padding: 14px 20px;
   border-top: 1px solid #f1f5f9;
   color: #334155;
+  box-sizing: border-box;
+  height: 49px;
+  line-height: 20px;
+  vertical-align: middle;
 }
 
 .table tr:hover td {
@@ -93,4 +110,42 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.skeleton {
+  display: block;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 45%, #e2e8f0 65%);
+  background-size: 220% 100%;
+  animation: tableSkeleton 1.2s ease-in-out infinite;
+}
+
+.skeletonRegion {
+  width: 72%;
+}
+
+.skeletonCount {
+  width: 64px;
+  margin-left: auto;
+}
+
+.skeletonBadge {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 45%, #e2e8f0 65%);
+  background-size: 220% 100%;
+  animation: tableSkeleton 1.2s ease-in-out infinite;
+}
+
+@keyframes tableSkeleton {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }

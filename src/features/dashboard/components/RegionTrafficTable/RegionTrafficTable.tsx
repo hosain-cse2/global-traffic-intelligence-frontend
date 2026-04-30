@@ -13,6 +13,7 @@ export type RegionalTraffic = {
 
 type RegionTrafficTableProps = {
   data: RegionalTraffic[];
+  isLoading?: boolean;
 };
 
 const TrafficLevelBadge = ({
@@ -30,14 +31,24 @@ const TrafficLevelBadge = ({
 
 const RegionTrafficTable: React.FC<RegionTrafficTableProps> = ({
   data,
+  isLoading = false,
 }): React.ReactNode => {
+  const skeletonRows = Array.from({ length: 7 }, (_, index) => index);
+
   return (
-    <div className={styles.tablePanel}>
+    <div className={styles.tablePanel} aria-busy={isLoading || undefined}>
       <div className={styles.tableHead}>
         <h2 className={styles.tableTitle}>Region traffic</h2>
         <p className={styles.tableDesc}>Total number of ships by region.</p>
       </div>
       <table className={styles.table}>
+        <colgroup>
+          <col className={styles.regionColumn} />
+          <col className={styles.countColumn} />
+          <col className={styles.countColumn} />
+          <col className={styles.countColumn} />
+          <col className={styles.levelColumn} />
+        </colgroup>
         <thead>
           <tr>
             <th className={styles.leftHeader}>Region</th>
@@ -48,27 +59,57 @@ const RegionTrafficTable: React.FC<RegionTrafficTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {data?.map(
-            ({
-              region,
-              totalShips,
-              movingShips,
-              stationaryShips,
-              trafficLevel,
-            }) => (
-              <tr key={region}>
-                <td>{region}</td>
-                <td className={styles.count}>{formatNumber(totalShips)}</td>
-                <td className={styles.count}>{formatNumber(movingShips)}</td>
-                <td className={styles.count}>
-                  {formatNumber(stationaryShips)}
-                </td>
-                <td className={styles.trafficLevelCell}>
-                  <TrafficLevelBadge trafficLevel={trafficLevel} />
-                </td>
-              </tr>
-            ),
-          )}
+          {isLoading
+            ? skeletonRows.map((row) => (
+                <tr key={`loading-region-${row}`}>
+                  <td>
+                    <span
+                      className={`${styles.skeleton} ${styles.skeletonRegion}`}
+                    />
+                  </td>
+                  <td>
+                    <span
+                      className={`${styles.skeleton} ${styles.skeletonCount}`}
+                    />
+                  </td>
+                  <td>
+                    <span
+                      className={`${styles.skeleton} ${styles.skeletonCount}`}
+                    />
+                  </td>
+                  <td>
+                    <span
+                      className={`${styles.skeleton} ${styles.skeletonCount}`}
+                    />
+                  </td>
+                  <td className={styles.trafficLevelCell}>
+                    <span className={styles.skeletonBadge} />
+                  </td>
+                </tr>
+              ))
+            : data?.map(
+                ({
+                  region,
+                  totalShips,
+                  movingShips,
+                  stationaryShips,
+                  trafficLevel,
+                }) => (
+                  <tr key={region}>
+                    <td>{region}</td>
+                    <td className={styles.count}>{formatNumber(totalShips)}</td>
+                    <td className={styles.count}>
+                      {formatNumber(movingShips)}
+                    </td>
+                    <td className={styles.count}>
+                      {formatNumber(stationaryShips)}
+                    </td>
+                    <td className={styles.trafficLevelCell}>
+                      <TrafficLevelBadge trafficLevel={trafficLevel} />
+                    </td>
+                  </tr>
+                ),
+              )}
         </tbody>
       </table>
     </div>
