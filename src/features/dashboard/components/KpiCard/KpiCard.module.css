@@ -35,3 +35,33 @@
   color: #94a3b8;
   font-weight: 500;
 }
+
+.skeleton {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 45%, #e2e8f0 65%);
+  background-size: 220% 100%;
+  animation: kpiSkeleton 1.2s ease-in-out infinite;
+}
+
+.skeletonValue {
+  width: 68%;
+  height: 32px;
+  margin-top: 2px;
+}
+
+.skeletonHint {
+  width: 46%;
+  height: 13px;
+  margin-top: 4px;
+}
+
+@keyframes kpiSkeleton {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}

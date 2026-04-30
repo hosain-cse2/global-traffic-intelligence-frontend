@@ -8,7 +8,7 @@ import { formatNumber } from "@/lib/helper";
 import RegionTrafficTable from "@/features/dashboard/components/RegionTrafficTable/RegionTrafficTable";
 
 export default function DashboardPage() {
-  const { data: dashboardStats } = useDashboardStats();
+  const { data: dashboardStats, isLoading } = useDashboardStats();
 
   return (
     <div className={styles.page}>
@@ -27,6 +27,7 @@ export default function DashboardPage() {
           value={formatNumber(dashboardStats?.totalShips)}
           hint={"Live snapshot"}
           positive={true}
+          isLoading={isLoading}
         />
         <KpiCard
           key={"High speed ships"}

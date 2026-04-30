@@ -5,16 +5,32 @@ type KpiCardProps = {
   value: string;
   hint: string;
   positive: boolean;
+  isLoading?: boolean;
 };
 
-const KpiCard = ({ label, value, hint, positive }: KpiCardProps) => {
+const KpiCard = ({
+  label,
+  value,
+  hint,
+  positive,
+  isLoading = false,
+}: KpiCardProps) => {
   return (
-    <article key={label} className={styles.kpiCard}>
+    <article className={styles.kpiCard} aria-busy={isLoading || undefined}>
       <span className={styles.kpiLabel}>{label}</span>
-      <span className={styles.kpiValue}>{value}</span>
-      <span className={positive ? styles.kpiHint : styles.kpiHintMuted}>
-        {hint}
-      </span>
+      {isLoading ? (
+        <>
+          <span className={`${styles.skeleton} ${styles.skeletonValue}`} />
+          <span className={`${styles.skeleton} ${styles.skeletonHint}`} />
+        </>
+      ) : (
+        <>
+          <span className={styles.kpiValue}>{value}</span>
+          <span className={positive ? styles.kpiHint : styles.kpiHintMuted}>
+            {hint}
+          </span>
+        </>
+      )}
     </article>
   );
 };
