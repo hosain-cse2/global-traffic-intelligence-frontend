@@ -41,6 +41,7 @@ export default function DashboardPage() {
                 : false
               : false
           }
+          isLoading={isLoading}
         />
         <KpiCard
           key={"Top regions"}
@@ -54,6 +55,7 @@ export default function DashboardPage() {
                 : false
               : false
           }
+          isLoading={isLoading}
         />
       </section>
 
