@@ -2,6 +2,7 @@ import {
   getMovementStateColor,
   getShipColor,
 } from "@/features/map/components/VesselMap/VesselMapHelper";
+import styles from "./AisBarChart.module.css";
 import { useMemo } from "react";
 import {
   Bar,
@@ -24,6 +25,7 @@ type AISBarChartProps = {
   data: ChartData<AISBarChartData>;
   /** `vesselType` uses ship-type colors; `movement` uses speed-band colors. */
   series?: "vesselType" | "movement";
+  isLoading?: boolean;
 };
 
 const tooltipStyle = {
@@ -35,6 +37,7 @@ const tooltipStyle = {
 const AisBarChart = ({
   data,
   series = "vesselType",
+  isLoading = false,
 }: AISBarChartProps) => {
   const barColors = useMemo(() => {
     return data.map((item) =>
@@ -43,6 +46,23 @@ const AisBarChart = ({
         : getShipColor(item.category),
     );
   }, [data, series]);
+
+  if (isLoading) {
+    return (
+      <div className={styles.barChartSkeleton} aria-hidden="true">
+        {Array.from({ length: 4 }, (_, index) => (
+          <div className={styles.skeletonRow} key={index}>
+            <span className={styles.skeletonLabel} />
+            <span
+              className={styles.skeletonBar}
+              style={{ width: `${72 - index * 10}%` }}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <BarChart
       data={data}

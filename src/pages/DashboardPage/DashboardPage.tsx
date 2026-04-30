@@ -66,6 +66,7 @@ export default function DashboardPage() {
         >
           <AisBarChart
             series="movement"
+            isLoading={isLoading}
             data={(dashboardStats?.movementState || []).map(
               ({ state, count }) => ({
                 category: state,

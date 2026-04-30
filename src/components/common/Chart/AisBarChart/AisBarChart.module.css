@@ -1,0 +1,45 @@
+.barChartSkeleton {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 24px 28px 24px 8px;
+  position: relative;
+  width: 688px;
+  height: 400px;
+}
+
+.skeletonRow {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: center;
+  gap: 14px;
+}
+
+.skeletonLabel,
+.skeletonBar {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 45%, #e2e8f0 65%);
+  background-size: 220% 100%;
+  animation: chartSkeleton 1.2s ease-in-out infinite;
+}
+
+.skeletonLabel {
+  width: 72%;
+  height: 14px;
+}
+
+.skeletonBar {
+  height: 28px;
+}
+
+@keyframes chartSkeleton {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
