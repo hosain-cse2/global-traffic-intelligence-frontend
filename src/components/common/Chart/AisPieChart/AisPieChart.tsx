@@ -253,7 +253,7 @@ const AisPieChart = ({
       <div className={styles.pieChartSkeleton} aria-hidden="true">
         <div className={styles.skeletonPie} />
         <div className={styles.skeletonLegend}>
-          {Array.from({ length: 5 }, (_, index) => (
+          {Array.from({ length: 7 }, (_, index) => (
             <span className={styles.skeletonLegendItem} key={index}>
               <span className={styles.skeletonDot} />
               <span className={styles.skeletonLabel} />
