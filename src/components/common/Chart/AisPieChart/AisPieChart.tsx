@@ -12,6 +12,7 @@ import {
   getMovementStateColor,
   getShipColor,
 } from "@/features/map/components/VesselMap/VesselMapHelper";
+import styles from "./AisPieChart.module.css";
 
 export type AisPieChartDatum = {
   state: string;
@@ -37,6 +38,7 @@ type AisPieChartProps = {
    * `vesselType` — ship categories (colors match the bar chart).
    */
   distribution?: AisPieChartDistribution;
+  isLoading?: boolean;
 };
 
 const RAD = Math.PI / 180;
@@ -133,7 +135,6 @@ function sliceFill(
   state: string | undefined,
   distribution: AisPieChartDistribution,
 ): string {
-  console.log({ state, distribution });
   if (!state) return SLICE_COLORS[0];
   if (distribution === "vesselType") return getShipColor(state);
   return getMovementStateColor(state);
@@ -237,6 +238,7 @@ const AisPieChart = ({
   variant = "fill",
   sliceLabels,
   distribution = "movement",
+  isLoading = false,
 }: AisPieChartProps) => {
   const pieData = useMemo(
     () => sortPieData(data, distribution),
@@ -245,6 +247,22 @@ const AisPieChart = ({
   const total = pieData.reduce((s, d) => s + d.count, 0);
   const showSliceCountLabels = sliceLabels !== false;
   const pieLabel = showSliceCountLabels ? renderSliceCountOutside : false;
+
+  if (isLoading) {
+    return (
+      <div className={styles.pieChartSkeleton} aria-hidden="true">
+        <div className={styles.skeletonPie} />
+        <div className={styles.skeletonLegend}>
+          {Array.from({ length: 5 }, (_, index) => (
+            <span className={styles.skeletonLegendItem} key={index}>
+              <span className={styles.skeletonDot} />
+              <span className={styles.skeletonLabel} />
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (variant === "ring") {
     return (

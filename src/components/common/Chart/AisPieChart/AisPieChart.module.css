@@ -1,0 +1,92 @@
+.pieChartSkeleton {
+  position: relative;
+  width: 480px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 24px;
+}
+
+.skeletonPie {
+  width: min(230px, 62%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, #ffffff 0 34%, transparent 35%),
+    conic-gradient(
+      from 90deg,
+      #e2e8f0 0deg 82deg,
+      #f8fafc 82deg 118deg,
+      #e2e8f0 118deg 210deg,
+      #f8fafc 210deg 250deg,
+      #e2e8f0 250deg 360deg
+    );
+  background-size:
+    100% 100%,
+    100% 100%;
+  animation: pieChartSkeleton 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 10px 14px rgba(15, 23, 42, 0.08));
+}
+
+.skeletonLegend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 16px;
+  width: 100%;
+}
+
+.skeletonLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.skeletonDot,
+.skeletonLabel {
+  display: block;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 45%, #e2e8f0 65%);
+  background-size: 220% 100%;
+  animation: pieLegendSkeleton 1.2s ease-in-out infinite;
+}
+
+.skeletonDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.skeletonLabel {
+  width: 58px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+@keyframes pieChartSkeleton {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.72;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotate(360deg);
+    opacity: 0.72;
+  }
+}
+
+@keyframes pieLegendSkeleton {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}

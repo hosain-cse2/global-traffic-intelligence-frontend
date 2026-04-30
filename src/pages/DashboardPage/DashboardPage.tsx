@@ -81,6 +81,7 @@ export default function DashboardPage() {
         >
           <AisPieChart
             distribution="vesselType"
+            isLoading={isLoading}
             data={(dashboardStats?.shipCountByType || []).map(
               ({ type, count }) => ({
                 state: type,
