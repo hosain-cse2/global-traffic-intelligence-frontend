@@ -1,18 +1,17 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { useGetShips } from "../../hooks/useShip";
 import { memo } from "react";
 
 import ShipCanvasLayerComponent from "../ShipCanvas/ShipCanvasLayerComponent";
 import styles from "./VesselMap.module.css";
+import { useShipSocket } from "../../hooks/useShipSocket";
 
 const VesselMap = () => {
   const position: [number, number] = [48.137154, 11.576124]; // TODO: Get actual position from user location
-  const { data: ships, isLoading, isFetched, isError, error } = useGetShips();
 
-  const isReady = isFetched && !isLoading;
+  const { ships, isConnected, error } = useShipSocket();
 
-  if (isReady && isError) {
+  if (isConnected && error) {
     return <div>Error loading ships: {error?.message}</div>;
   }
 
