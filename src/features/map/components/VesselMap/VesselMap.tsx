@@ -9,10 +9,12 @@ import { useShipSocket } from "../../hooks/useShipSocket";
 const VesselMap = () => {
   const position: [number, number] = [48.137154, 11.576124]; // TODO: Get actual position from user location
 
-  const { ships, isConnected, error } = useShipSocket();
+  const { ships, isReady, error } = useShipSocket();
 
-  if (isConnected && error) {
-    return <div>Error loading ships: {error?.message}</div>;
+  if (!isReady) {
+    return <div>Connecting to ship socket...</div>; // TODO: Add a loading state
+  } else if (error) {
+    return <div>Error loading ships: {error?.message}</div>; // TODO: Add a error state
   }
 
   return (

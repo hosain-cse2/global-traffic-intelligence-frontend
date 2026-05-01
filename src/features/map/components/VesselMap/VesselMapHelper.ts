@@ -25,7 +25,7 @@ export const getShipColor = (type?: string) => {
     case "passenger":
       return "#38bdf8";
     case "fishing":
-      return "#facc15";
+      return "#fb7185";
     case "sailing":
       return "#22d3d4";
     case "pleasure":
@@ -35,6 +35,6 @@ export const getShipColor = (type?: string) => {
     case "navy":
       return "#818cf8";
     default:
-      return "#fb7185";
+      return "#facc15";
   }
 };

@@ -218,6 +218,8 @@ export class ShipCanvasLayer extends L.Layer {
     this.ctx.translate(x, y);
     this.ctx.rotate(rad);
 
+    this.ctx.strokeStyle = "#334155";
+    this.ctx.lineWidth = 1;
     this.ctx.beginPath();
     this.ctx.moveTo(0, -8);
     this.ctx.lineTo(5, 8);
@@ -227,6 +229,7 @@ export class ShipCanvasLayer extends L.Layer {
 
     this.ctx.fillStyle = color;
     this.ctx.fill();
+    this.ctx.stroke();
 
     this.ctx.restore();
   }

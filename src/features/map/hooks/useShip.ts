@@ -7,6 +7,10 @@ export const useGetShips = (): UseQueryResult<Ship[], Error> => {
   return useQuery({
     queryKey: ["shipsData"],
     queryFn: () => getShips(),
-    retry: false,
+    staleTime: Infinity, // data is always fresh → no refetch
+    gcTime: Infinity, // keep in cache forever (v5) (v4: cacheTime)
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 };
