@@ -1,8 +1,20 @@
 # Global Traffic Frontend
 
-## Deployment
+## Managing the Application with Docker Compose
 
-### Option 1: Docker CLI
+Start the application:
+
+```bash
+docker compose up -d --build
+```
+
+Stop the application:
+
+```bash
+docker compose down
+```
+
+## Managing the Application with Docker CLI
 
 Build the Docker image:
 
@@ -20,16 +32,6 @@ docker run \
   global-traffic-frontend:latest
 ```
 
-### Option 2: Docker Compose
-
-```bash
-docker compose up -d --build
-```
-
-## Shutdown and Cleanup
-
-### Option 1: Docker CLI
-
 Stop the container:
 
 ```bash
@@ -40,10 +42,4 @@ Delete the container:
 
 ```bash
 docker rm global-traffic-frontend-container
-```
-
-### Option 2: Docker Compose
-
-```bash
-docker compose down
 ```
