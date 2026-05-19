@@ -23,7 +23,8 @@ export function useShipSocket() {
   } = useGetShips();
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:3000/ws");
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
 
     socket.onopen = () => {
       setIsConnected(true);
