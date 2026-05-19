@@ -1,0 +1,10 @@
+services:
+  frontend:
+    image: global-traffic-frontend:latest
+    container_name: global-traffic-frontend-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    env_file: .env
