@@ -1,4 +1,4 @@
-import { useMe } from "@/hooks/useMe";
+import { useMe } from "@/features/auth/hooks/useMe";
 
 import { createContext, useContext } from "react";
 

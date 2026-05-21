@@ -1,5 +1,5 @@
 import type { User } from "@/features/auth/AuthContext";
-import { apiClient } from "@/lib/apiClient";
+import { apiClient } from "@/shared/utils/fetchApiClient";
 
 /** Clears session cookies on the server. */
 export async function logout(): Promise<void> {

@@ -1,5 +1,8 @@
-import { apiClient } from "@/lib/apiClient";
-import type { LoginCredentials, LoginResponse } from "@/types/auth";
+import { apiClient } from "@/shared/utils/fetchApiClient";
+import type {
+  LoginCredentials,
+  LoginResponse,
+} from "@/features/auth/types/auth";
 
 export async function login(
   credentials: LoginCredentials,

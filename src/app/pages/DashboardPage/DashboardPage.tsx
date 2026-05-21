@@ -1,10 +1,10 @@
 import styles from "./DashboardPage.module.css";
 import KpiCard from "@/features/dashboard/components/KpiCard/KpiCard";
 import ChartCard from "@/features/dashboard/components/ChartCard/ChartCard";
-import AisBarChart from "@/components/common/Chart/AisBarChart/AisBarChart";
-import AisPieChart from "@/components/common/Chart/AisPieChart/AisPieChart";
+import AisBarChart from "@/shared/components/Chart/AisBarChart/AisBarChart";
+import AisPieChart from "@/shared/components/Chart/AisPieChart/AisPieChart";
 import useDashboardStats from "@/features/dashboard/hooks/useDashboardStats";
-import { formatNumber } from "@/lib/helper";
+import { formatNumber } from "@/shared/utils/helper";
 import RegionTrafficTable from "@/features/dashboard/components/RegionTrafficTable/RegionTrafficTable";
 
 export default function DashboardPage() {

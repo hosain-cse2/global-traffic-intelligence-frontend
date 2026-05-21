@@ -1,5 +1,5 @@
 import type { User } from "@/features/auth/AuthContext";
-import { logout } from "@/services/sessionApi";
+import { logout } from "@/shared/api/sessionApi";
 import {
   useMutation,
   useQueryClient,

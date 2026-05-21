@@ -1,4 +1,4 @@
-import { getShips } from "@/services/vesselApi";
+import { getShips } from "@/features/map/api/shipApi";
 import { useQuery } from "@tanstack/react-query";
 import type { Ship } from "../types/ship";
 import type { UseQueryResult } from "@tanstack/react-query";

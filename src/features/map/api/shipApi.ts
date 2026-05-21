@@ -1,5 +1,5 @@
 import type { Ship } from "@/features/map/types/ship";
-import { apiClient } from "@/lib/apiClient";
+import { apiClient } from "@/shared/utils/fetchApiClient";
 
 export async function getShips(): Promise<Ship[]> {
   const shipResponse = await apiClient.get<Ship[]>("/api/aisstream/ships");

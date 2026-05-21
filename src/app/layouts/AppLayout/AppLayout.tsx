@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Header from "@/components/common/Header/Header";
+import Header from "@/shared/components/Header/Header";
 import styles from "./AppLayout.module.css";
 
 export default function AppLayout() {

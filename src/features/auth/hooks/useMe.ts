@@ -1,4 +1,4 @@
-import { getMe } from "@/services/sessionApi";
+import { getMe } from "@/shared/api/sessionApi";
 import { useQuery } from "@tanstack/react-query";
 
 export const useMe = () => {

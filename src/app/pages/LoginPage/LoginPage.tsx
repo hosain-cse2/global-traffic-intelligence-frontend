@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import styles from "./LoginPage.module.css";
 
-import useLogin from "@/hooks/useLogin";
+import useLogin from "@/features/auth/hooks/useLogin";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("alice@example.com");

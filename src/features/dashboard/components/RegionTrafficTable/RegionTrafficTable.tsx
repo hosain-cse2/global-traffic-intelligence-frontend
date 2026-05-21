@@ -1,4 +1,4 @@
-import { formatNumber } from "@/lib/helper";
+import { formatNumber } from "@/shared/utils/helper";
 import styles from "./RegionTrafficTable.module.css";
 
 type TrafficLevel = "low" | "medium" | "high" | "not traffic";

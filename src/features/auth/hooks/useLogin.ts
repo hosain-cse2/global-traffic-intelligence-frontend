@@ -1,5 +1,5 @@
-import { login } from "@/services/authApi";
-import type { LoginResponse } from "@/types/auth";
+import { login } from "@/features/auth/api/authApi";
+import type { LoginResponse } from "@/features/auth/types/auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const useLogin = () => {

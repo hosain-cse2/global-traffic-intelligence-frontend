@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/features/auth/AuthContext";
 import type { User } from "@/features/auth/AuthContext";
 import styles from "./AvatarMenu.module.css";
-import useLogout from "@/hooks/useLogout";
+import useLogout from "@/features/auth/hooks/useLogout";
 
 function initialsForUser(user: User): string {
   const first = user.firstName?.trim();
