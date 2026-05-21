@@ -5,8 +5,8 @@ import styles from "./LoginPage.module.css";
 import useLogin from "@/features/auth/hooks/useLogin";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("alice@example.com");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const { mutate: login, error } = useLogin();
 
@@ -35,7 +35,7 @@ export default function LoginPage() {
             type="email"
             name="email"
             autoComplete="email"
-            placeholder="you@email.com"
+            placeholder="email@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -51,7 +51,7 @@ export default function LoginPage() {
             type="password"
             name="password"
             autoComplete="current-password"
-            placeholder="••••••••"
+            placeholder="••••••••••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
