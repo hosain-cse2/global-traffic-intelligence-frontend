@@ -55,7 +55,7 @@ export function useShipSocket() {
     return () => {
       socket.close();
     };
-  }, []);
+  }, [queryClient]);
 
   const error =
     ships?.length === 0 ? (shipsApiError ?? websocketError) : websocketError;

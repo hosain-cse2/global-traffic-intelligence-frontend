@@ -1,4 +1,9 @@
-import type { User } from "@/features/auth/AuthContext";
+export type User = {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+};
 
 /** Align field names with your Node API (e.g. `username` instead of `email`). */
 export type LoginCredentials = {

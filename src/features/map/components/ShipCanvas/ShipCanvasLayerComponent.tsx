@@ -19,6 +19,8 @@ export default function ShipCanvasLayerComponent({ ships }: Props) {
     return () => {
       map.removeLayer(layer);
     };
+    // Layer is created once per map; ship updates use setShips below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ships intentionally omitted
   }, [map]);
 
   useEffect(() => {

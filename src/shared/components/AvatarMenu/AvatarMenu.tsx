@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/features/auth/AuthContext";
-import type { User } from "@/features/auth/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import type { User } from "@/features/auth/types/auth";
 import styles from "./AvatarMenu.module.css";
 import useLogout from "@/features/auth/hooks/useLogout";
 

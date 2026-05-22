@@ -1,4 +1,4 @@
-import type { User } from "@/features/auth/AuthContext";
+import type { User } from "@/features/auth/types/auth";
 import { apiClient } from "@/shared/utils/fetchApiClient";
 
 /** Clears session cookies on the server. */

@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import styles from "./Header.module.css";
 import logo from "@/assets/logo.png";
-import { useAuth } from "@/features/auth/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import AvatarMenu from "../AvatarMenu/AvatarMenu";
 
 const Header = () => {

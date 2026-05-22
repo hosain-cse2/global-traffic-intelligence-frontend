@@ -1,4 +1,4 @@
-import type { User } from "@/features/auth/AuthContext";
+import type { User } from "@/features/auth/types/auth";
 import { logout } from "@/shared/api/sessionApi";
 import {
   useMutation,
