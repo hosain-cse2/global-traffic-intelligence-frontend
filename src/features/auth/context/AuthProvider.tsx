@@ -6,8 +6,6 @@ import { AuthContext } from "./authContext";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: user, isLoading, isFetched, isError, error } = useMe();
 
-  console.log({ user, isLoading, isFetched, isError, error: error?.message });
-
   return (
     <AuthContext.Provider
       value={{

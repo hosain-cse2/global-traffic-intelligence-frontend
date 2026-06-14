@@ -1,0 +1,96 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.pageInset {
+  composes: page;
+  min-height: 100%;
+}
+
+.code {
+  margin: 0 0 8px;
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #e2e8f0;
+  line-height: 1;
+}
+
+.title {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.message {
+  margin: 0 0 24px;
+  max-width: 36ch;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.button {
+  display: inline-flex;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: #ffffff;
+  background: #1a202c;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #2d3748;
+}
+
+.buttonSecondary {
+  composes: button;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+}
+
+.buttonSecondary:hover {
+  background: #f8fafc;
+}
+
+.errorDetail {
+  margin: 0 0 24px;
+  max-width: 36ch;
+}
+
+.errorDetailLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.errorDetailText {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #b91c1c;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  word-break: break-word;
+}

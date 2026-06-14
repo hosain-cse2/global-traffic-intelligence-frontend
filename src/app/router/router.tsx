@@ -2,12 +2,12 @@ import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "../layouts/AppLayout/AppLayout";
 import MapPage from "../pages/MapPage/MapPage";
 import DashboardPage from "../pages/DashboardPage/DashboardPage";
+import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import PublicLayout from "@/app/layouts/PublicLayout/PublicLayout";
 import LoginPage from "@/app/pages/LoginPage/LoginPage";
 import { PublicRoute } from "./PublicRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 import RouteErrorPage from "./RouteErrorPage";
-
 export const router = createBrowserRouter([
   {
     errorElement: <RouteErrorPage />,
@@ -27,6 +27,10 @@ export const router = createBrowserRouter([
           {
             path: "login",
             element: <LoginPage />,
+          },
+          {
+            path: "*",
+            element: <NotFoundPage />,
           },
         ],
       },
@@ -49,6 +53,10 @@ export const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <DashboardPage />,
+          },
+          {
+            path: "*",
+            element: <NotFoundPage />,
           },
         ],
       },
