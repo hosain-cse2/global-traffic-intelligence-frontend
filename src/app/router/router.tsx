@@ -6,45 +6,51 @@ import PublicLayout from "@/app/layouts/PublicLayout/PublicLayout";
 import LoginPage from "@/app/pages/LoginPage/LoginPage";
 import { PublicRoute } from "./PublicRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
+import RouteErrorPage from "./RouteErrorPage";
 
 export const router = createBrowserRouter([
   {
-    path: "auth",
-    element: (
-      <PublicRoute>
-        <PublicLayout />
-      </PublicRoute>
-    ),
+    errorElement: <RouteErrorPage />,
     children: [
       {
-        index: true,
-        element: <LoginPage />,
+        path: "auth",
+        element: (
+          <PublicRoute>
+            <PublicLayout />
+          </PublicRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <LoginPage />,
+          },
+          {
+            path: "login",
+            element: <LoginPage />,
+          },
+        ],
       },
       {
-        path: "login",
-        element: <LoginPage />,
-      },
-    ],
-  },
-  {
-    path: "/",
-    element: (
-      <ProtectedRoute>
-        <AppLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true,
-        element: <MapPage />,
-      },
-      {
-        path: "map",
-        element: <MapPage />,
-      },
-      {
-        path: "dashboard",
-        element: <DashboardPage />,
+        path: "/",
+        element: (
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <MapPage />,
+          },
+          {
+            path: "map",
+            element: <MapPage />,
+          },
+          {
+            path: "dashboard",
+            element: <DashboardPage />,
+          },
+        ],
       },
     ],
   },
