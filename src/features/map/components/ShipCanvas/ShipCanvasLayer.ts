@@ -5,6 +5,8 @@ import "./ShipCanvasLayer.css";
 
 type ShipCanvasLayerOptions = L.LayerOptions & {
   ships?: Ship[];
+  onShipClick?: (ship: Ship) => void;
+  onShipDeselect?: () => void;
 };
 
 export class ShipCanvasLayer extends L.Layer {
@@ -14,10 +16,15 @@ export class ShipCanvasLayer extends L.Layer {
   private ships: Ship[] = [];
   private animationFrameId: number | null = null;
   private hoveredShip: Ship | null = null;
+  private selectedMmsi: string | null = null;
+  private onShipClick?: (ship: Ship) => void;
+  private onShipDeselect?: () => void;
 
   constructor(options: ShipCanvasLayerOptions = {}) {
     super(options);
     this.ships = options.ships ?? [];
+    this.onShipClick = options.onShipClick;
+    this.onShipDeselect = options.onShipDeselect;
   }
 
   onAdd(map: L.Map): this {
@@ -49,6 +56,7 @@ export class ShipCanvasLayer extends L.Layer {
 
     this.canvas.addEventListener("mousemove", this.onMouseMove);
     this.canvas.addEventListener("mouseleave", this.onMouseLeave);
+    this.canvas.addEventListener("click", this.onClick);
 
     return this;
   }
@@ -69,18 +77,21 @@ export class ShipCanvasLayer extends L.Layer {
 
     this.canvas.removeEventListener("mousemove", this.onMouseMove);
     this.canvas.removeEventListener("mouseleave", this.onMouseLeave);
+    this.canvas.removeEventListener("click", this.onClick);
 
     return this;
   }
 
-  private onMouseMove = (e: MouseEvent) => {
-    if (!this.mapInstance) return;
+  setSelectedMmsi(mmsi: string | null) {
+    if (this.selectedMmsi === mmsi) return;
+    this.selectedMmsi = mmsi;
+    this.redraw();
+  }
 
-    const rect = this.canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+  private findShipAt(mouseX: number, mouseY: number): Ship | null {
+    if (!this.mapInstance) return null;
 
-    let foundShip: Ship | null = null;
+    const hitSize = 8;
 
     for (const ship of this.ships) {
       const lat = ship.position?.latitude;
@@ -90,25 +101,48 @@ export class ShipCanvasLayer extends L.Layer {
 
       const point = this.mapInstance.latLngToContainerPoint([lat, lng]);
 
-      // hit area around ship center
-      const hitSize = 8;
-
       if (
         mouseX >= point.x - hitSize &&
         mouseX <= point.x + hitSize &&
         mouseY >= point.y - hitSize &&
         mouseY <= point.y + hitSize
       ) {
-        foundShip = ship;
-        break;
+        return ship;
       }
     }
+
+    return null;
+  }
+
+  private getMousePosition(e: MouseEvent) {
+    const rect = this.canvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+  }
+
+  private onMouseMove = (e: MouseEvent) => {
+    const { x, y } = this.getMousePosition(e);
+    const foundShip = this.findShipAt(x, y);
 
     if (this.hoveredShip !== foundShip) {
       this.hoveredShip = foundShip;
       this.canvas.style.cursor = foundShip ? "pointer" : "";
       this.redraw();
     }
+  };
+
+  private onClick = (e: MouseEvent) => {
+    const { x, y } = this.getMousePosition(e);
+    const foundShip = this.findShipAt(x, y);
+
+    if (foundShip) {
+      this.onShipClick?.(foundShip);
+      return;
+    }
+
+    this.onShipDeselect?.();
   };
 
   private onMouseLeave = () => {
@@ -181,6 +215,7 @@ export class ShipCanvasLayer extends L.Layer {
       }
 
       const isHovered = this.hoveredShip?.mmsi === ship.mmsi;
+      const isSelected = this.selectedMmsi === ship.mmsi;
 
       this.drawShip(
         point.x,
@@ -188,6 +223,7 @@ export class ShipCanvasLayer extends L.Layer {
         ship.position?.heading ?? 0,
         getShipColor(ship.type),
         isHovered,
+        isSelected,
       );
     }
   }
@@ -198,17 +234,22 @@ export class ShipCanvasLayer extends L.Layer {
     heading: number,
     color: string,
     isHovered: boolean,
+    isSelected: boolean,
   ) {
     const rad = (heading * Math.PI) / 180;
 
-    // draw highlight first without rotation
-    if (isHovered) {
+    if (isSelected) {
       this.ctx.save();
-      this.ctx.strokeStyle = "red"; // reddish
+      this.ctx.strokeStyle = "#2563eb";
+      this.ctx.lineWidth = 2;
+      this.ctx.setLineDash([]);
+      this.ctx.strokeRect(x - 16, y - 16, 32, 32);
+      this.ctx.restore();
+    } else if (isHovered) {
+      this.ctx.save();
+      this.ctx.strokeStyle = "red";
       this.ctx.lineWidth = 1;
-
-      // dotted / dashed line
-      this.ctx.setLineDash([6, 1]); // 4px line, 3px gap
+      this.ctx.setLineDash([6, 1]);
       this.ctx.strokeRect(x - 15, y - 15, 30, 30);
       this.ctx.restore();
     }

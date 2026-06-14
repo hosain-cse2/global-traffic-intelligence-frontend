@@ -1,8 +1,11 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { memo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import ShipCanvasLayerComponent from "../ShipCanvas/ShipCanvasLayerComponent";
+import ShipDetailPanel from "../ShipDetailPanel/ShipDetailPanel";
+import type { Ship } from "../../types/ship";
+import MapPanToShip from "./MapPanToShip";
 import styles from "./VesselMap.module.css";
 import { useShipSocket } from "../../hooks/useShipSocket";
 
@@ -10,6 +13,20 @@ const VesselMap = () => {
   const position: [number, number] = [48.137154, 11.576124]; // TODO: Get actual position from user location
 
   const { ships, isReady, error } = useShipSocket();
+  const [selectedMmsi, setSelectedMmsi] = useState<string | null>(null);
+
+  const selectedShip = useMemo(
+    () => ships?.find((ship) => ship.mmsi === selectedMmsi) ?? null,
+    [ships, selectedMmsi],
+  );
+
+  const handleShipClick = useCallback((ship: Ship) => {
+    setSelectedMmsi(ship.mmsi);
+  }, []);
+
+  const handleShipDeselect = useCallback(() => {
+    setSelectedMmsi(null);
+  }, []);
 
   if (!isReady) {
     return <div>Connecting to ship socket...</div>; // TODO: Add a loading state
@@ -19,6 +36,12 @@ const VesselMap = () => {
 
   return (
     <div className={styles.mapContainer}>
+      {selectedShip && (
+        <ShipDetailPanel
+          ship={selectedShip}
+          onClose={() => setSelectedMmsi(null)}
+        />
+      )}
       <MapContainer
         center={position}
         zoom={3}
@@ -46,7 +69,13 @@ const VesselMap = () => {
               />
             );
           })} */}
-        <ShipCanvasLayerComponent ships={ships ?? []} />
+        <ShipCanvasLayerComponent
+          ships={ships ?? []}
+          selectedMmsi={selectedMmsi}
+          onShipClick={handleShipClick}
+          onShipDeselect={handleShipDeselect}
+        />
+        <MapPanToShip ship={selectedShip} />
       </MapContainer>
     </div>
   );
