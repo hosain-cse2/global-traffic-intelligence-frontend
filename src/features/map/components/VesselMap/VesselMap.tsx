@@ -35,11 +35,14 @@ const VesselMap = () => {
 
   useEffect(() => {
     if (isDisconnected) {
+      // TODO: Need to find a better way to set state in effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSocketState("disconnected");
       return;
     }
 
     if (isConnected) {
+      // TODO:  Need to find a better way to set state in effect
       setSocketState((prev) =>
         prev === "disconnected" ? "reconnected" : prev,
       );
@@ -50,7 +53,6 @@ const VesselMap = () => {
     if (socketState !== "reconnected") return;
 
     const timeoutId = window.setTimeout(() => {
-      console.log("Removing Banner ...");
       setSocketState(null);
     }, 2500);
 

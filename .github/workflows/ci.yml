@@ -45,6 +45,12 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      - name: Run Unit Tests
+        run: npm run test
+
+      - name: Run Unit Tests Coverage
+        run: npm run test:coverage
+
   docker:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
