@@ -1,0 +1,25 @@
+.banner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 4px 14px rgb(15 23 42 / 12%);
+}
+
+.success {
+  border-color: #bbf7d0;
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
+.error {
+  border-color: #fecaca;
+  background-color: #fef2f2;
+  color: #991b1b;
+}

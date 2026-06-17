@@ -1,6 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import ShipCanvasLayerComponent from "../ShipCanvas/ShipCanvasLayerComponent";
 import ShipDetailPanel from "../ShipDetailPanel/ShipDetailPanel";
@@ -8,12 +8,17 @@ import type { Ship } from "../../types/ship";
 import MapPanToShip from "./MapPanToShip";
 import styles from "./VesselMap.module.css";
 import { useShipSocket } from "../../hooks/useShipSocket";
+import Banner from "@/shared/components/Banner/Banner";
 
 const VesselMap = () => {
   const position: [number, number] = [48.137154, 11.576124]; // TODO: Get actual position from user location
 
-  const { ships, isReady, error } = useShipSocket();
+  const { ships, isReady, error, isDisconnected, isConnected } =
+    useShipSocket();
   const [selectedMmsi, setSelectedMmsi] = useState<string | null>(null);
+  const [socketState, setSocketState] = useState<
+    "disconnected" | "reconnected" | null
+  >(null);
 
   const selectedShip = useMemo(
     () => ships?.find((ship) => ship.mmsi === selectedMmsi) ?? null,
@@ -28,6 +33,30 @@ const VesselMap = () => {
     setSelectedMmsi(null);
   }, []);
 
+  useEffect(() => {
+    if (isDisconnected) {
+      setSocketState("disconnected");
+      return;
+    }
+
+    if (isConnected) {
+      setSocketState((prev) =>
+        prev === "disconnected" ? "reconnected" : prev,
+      );
+    }
+  }, [isConnected, isDisconnected]);
+
+  useEffect(() => {
+    if (socketState !== "reconnected") return;
+
+    const timeoutId = window.setTimeout(() => {
+      console.log("Removing Banner ...");
+      setSocketState(null);
+    }, 2500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [socketState]);
+
   if (!isReady) {
     return <div>Connecting to ship socket...</div>; // TODO: Add a loading state
   } else if (error) {
@@ -36,6 +65,16 @@ const VesselMap = () => {
 
   return (
     <div className={styles.mapContainer}>
+      {socketState && (
+        <Banner
+          state={socketState === "disconnected" ? "error" : "success"}
+          message={
+            socketState === "disconnected"
+              ? "Live updates disconnected. Showing last known ship positions."
+              : "Live updates reconnected."
+          }
+        />
+      )}
       {selectedShip && (
         <ShipDetailPanel
           ship={selectedShip}

@@ -1,6 +1,6 @@
 // hooks/useShipSocket.ts
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Ship } from "@/features/map/types/ship";
 import { useGetShips } from "./useShip";
 import { useQueryClient } from "@tanstack/react-query";
@@ -11,7 +11,9 @@ type WsMessage =
 
 export function useShipSocket() {
   const [isConnected, setIsConnected] = useState(false);
+  const [wasEverConnected, setWasEverConnected] = useState(false);
   const [websocketError, setWebsocketError] = useState<Error | null>(null);
+  const reconnectTimeoutRef = useRef<number | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -23,43 +25,68 @@ export function useShipSocket() {
   } = useGetShips();
 
   useEffect(() => {
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+    let isUnmounted = false;
+    let socket: WebSocket | null = null;
 
-    socket.onopen = () => {
-      setIsConnected(true);
-      setWebsocketError(null);
-      console.log("[WS] connected");
+    const scheduleReconnect = () => {
+      if (isUnmounted || reconnectTimeoutRef.current !== null) return;
+      reconnectTimeoutRef.current = window.setTimeout(() => {
+        reconnectTimeoutRef.current = null;
+        connect();
+      }, 2000);
     };
 
-    socket.onmessage = (event) => {
-      const message: WsMessage = JSON.parse(event.data);
+    const connect = () => {
+      if (isUnmounted) return;
+      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+      socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
 
-      if (message.type === "ships:snapshot") {
-        queryClient.setQueryData(["shipsData"], message.payload);
+      socket.onopen = () => {
+        setIsConnected(true);
+        setWasEverConnected(true);
         setWebsocketError(null);
-      }
+        console.log("[WS] connected");
+      };
+
+      socket.onmessage = (event) => {
+        const message: WsMessage = JSON.parse(event.data);
+
+        if (message.type === "ships:snapshot") {
+          queryClient.setQueryData(["shipsData"], message.payload);
+          setWebsocketError(null);
+        }
+      };
+
+      socket.onclose = () => {
+        if (isUnmounted) return;
+        setIsConnected(false);
+        setWebsocketError(null);
+        console.log("[WS] disconnected");
+        scheduleReconnect();
+      };
+
+      socket.onerror = (error) => {
+        console.error("[WS] error", error);
+        setIsConnected(false);
+        setWebsocketError(new Error((error as ErrorEvent).message));
+      };
     };
 
-    socket.onclose = () => {
-      setIsConnected(false);
-      setWebsocketError(null);
-      console.log("[WS] disconnected");
-    };
-
-    socket.onerror = (error) => {
-      console.error("[WS] error", error);
-      setWebsocketError(new Error((error as ErrorEvent).message));
-    };
+    connect();
 
     return () => {
-      socket.close();
+      isUnmounted = true;
+      if (reconnectTimeoutRef.current !== null) {
+        window.clearTimeout(reconnectTimeoutRef.current);
+      }
+      socket?.close();
     };
   }, [queryClient]);
 
-  const error =
-    ships?.length === 0 ? (shipsApiError ?? websocketError) : websocketError;
-  const isReady = ships?.length === 0 ? isFetched && !isLoading : isConnected;
+  const hasShips = (ships?.length ?? 0) > 0;
+  const error = hasShips ? null : shipsApiError ?? websocketError;
+  const isReady = hasShips || (isFetched && !isLoading);
+  const isDisconnected = wasEverConnected && !isConnected;
 
-  return { ships, isReady, error };
+  return { ships, isReady, error, isDisconnected, isConnected };
 }
